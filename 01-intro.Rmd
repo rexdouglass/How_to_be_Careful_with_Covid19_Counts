@@ -1,17 +1,142 @@
+
+```{r,warning=FALSE,message=FALSE,error=FALSE, results='hide' , include=FALSE}
+knitr::opts_chunk$set( out.width='100%', fig.asp=NULL, fig.align='center', echo=F, warning=FALSE,message=FALSE,error=FALSE, results='hide', cache=T  ) 
+
+#Notes to self
+#It's not like R notebook you have the knit every time you want to update html, you can't just save
+#You don't have to rerun the code or rebuild the whole book though.
+
+```
+
+```{r}
+#Library Loads
+library(scales) 
+library(tidyverse)
+# stable version on CRAN
+#install.packages("bookdown")
+# or development version on GitHub
+# devtools::install_github('rstudio/bookdown')
+
+```
+
+
+```{r}
+
+library(tsibble)
+
+lhs_long <- readRDS("/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long.Rds")
+dim(lhs_long) #779818
+
+####crap, some package I loaded breaks dplyr badly. The only one I can think of is UpSetR.
+
+lhs_long_clean <- lhs_long %>% as.data.frame() %>% ungroup() %>% 
+                  #filter(wikidata_id=="Q30" ) %>% #& dataset=="yahoo"
+                  mutate(dataset_gid_geonameid_wikidata_id= paste(dataset,gid,geonameid, wikidata_id, sep="_")  ) %>%
+                  mutate(gid_geonameid_wikidata_id= paste(gid,geonameid, wikidata_id, sep="_")  ) %>%
+
+                  dplyr::select(dataset_gid_geonameid_wikidata_id, gid_geonameid_wikidata_id, dataset, gid,geonameid, wikidata_id ,date_asdate, confirmed, deaths, tested_people, tested_samples) %>%
+  
+                  group_by(dataset_gid_geonameid_wikidata_id ,date_asdate) %>% #if the same source has multiple values on the same thing on the same day, or different values across unmerged obs, then take the max
+                    summarise_all(max, na.rm=T) %>% 
+                  ungroup() %>%
+  
+                  mutate_if(is.numeric, list(~na_if(., -Inf))) %>%
+                  mutate_if(is.numeric, list(~na_if(., Inf))) %>%
+  
+                  filter(!is.na(date_asdate)) %>%
+                  
+                  #First drop anything that's negative. Shouldn't be any negatives.
+                  filter(is.na(confirmed) | confirmed>=0) %>%
+                  filter(is.na(deaths) | deaths>=0) %>%
+                  filter(is.na(tested_people) | tested_people>=0) %>%
+                  filter(is.na(tested_samples) | tested_samples>=0) %>%
+                  
+                  #Then set 0s to NA, we don't trust NAs
+                  mutate(confirmed=ifelse(confirmed==0, NA, confirmed)) %>%
+                  mutate(deaths=ifelse(deaths==0, NA, deaths)) %>%
+                  mutate(tested_people=ifelse(tested_people==0, NA, tested_people)) %>%
+                  mutate(tested_samples=ifelse(tested_samples==0, NA, tested_samples)) %>%
+                
+                  #Then check first differences and drop anything that doesn't weakly increase monotonically
+                  dplyr::group_by(  dataset_gid_geonameid_wikidata_id ) %>%  #it's not grouping correctly all of a sudden?
+                    dplyr::arrange(date_asdate) %>%
+                    mutate(confirmed_cummax =    confirmed %>% replace_na(0) %>% cummax(),
+                           deaths_cummax    =    deaths %>% replace_na(0) %>% cummax(),
+                           tested_people_cummax= tested_people %>% replace_na(0) %>% cummax(), 
+                           tested_samples_cummax=tested_samples %>% replace_na(0) %>% cummax()
+                           ) %>%
+                  ungroup() %>%  
+  
+                  #About 4k of these observations show a decrease from one time step to the next which suggests either an original error or a joining error
+                  #We're going to straight drop those observations as a cleaning step
+                  #this isn't enough because if you have consecutive mistakes it'll show a positive fd even if it's not good enough
+                  filter( (is.na(confirmed) | confirmed>=confirmed_cummax) &  #never allow for a reversal
+                          (is.na(deaths) | deaths>=deaths_cummax) &        #never allow for a reversal
+                          (is.na(tested_people) | tested_people>=tested_people_cummax) &  #never allow for a reversal
+                          (is.na(tested_samples) | tested_samples>=tested_samples_cummax)  #never allow for a reversal
+                          ) %>%
+  #we're going to go one step further and require either confirmed or tested to be strictly higher
+  #In words, during an episode we don't believe reports mean "no new cases" just no new good reporting
+  #metabiota is the worst offender here so restricting it to just that
+  filter( !(
+            dataset=="metabiota" & #is metabiota
+            (!is.na(confirmed) &   #with a non missing confirmed
+              confirmed<=confirmed_cummax ) #that is equal to or less than the cumulative max until then.
+            ) #reject these
+          ) %>% #metabiota is really problematic 90% of what we're doing is trying to account for it
+  
+  #Also reject any where deaths are greater than confirmed
+  filter(is.na(confirmed) | is.na(deaths) | confirmed>=deaths) #%>%
+  
+  #also reject any where confirmed doesn't vary at all at that location
+  #I should do this but it's throwing weird warnings
+  #group_by( gid_geonameid_wikidata_id) %>% #
+  #  filter( confirmed %>% unique() %>% length() > 1 ) %>%
+  #ungroup()
+
+dim(lhs_long_clean) #675,696
+
+saveRDS(lhs_long_clean,
+        "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleand.Rds")
+
+```
+
+
+```{r}
+#Data Loads
+lhs_long <- readRDS("/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long.Rds")
+#Data loads
+lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleand.Rds")
+
+
+```
+
 # Introduction {#intro}
 
-You can label chapter and section titles using `{#label}` after them, e.g., we can reference Chapter \@ref(intro). If you do not manually label them, there will be automatic labels anyway, e.g., Chapter \@ref(methods).
+How should we interpret the endless stream of figures and maps of COVID-19 produced by health departments and organizations around the world? For better or worse, we primarily experience large complicated events through counts- How many are dead?; How many are sick?; How many tests did we perform? These are universal questions, immediately accessible to both the producers of information like doctors and scientists and consumers of information like policy makers and citizens. For anyone who regularly works with the answers to those questions, the actual data, you know that every one of those simple numbers in a cell needs a big asterisks pointing to a long footnote explaining all of the problems in developing and using that number. This book is that footnote for COVID-19 counts. It is intended as a practical guide for using COVID-19 data, and all of the regularities and subtle gotchas you can expect to find.
 
-Figures and tables with captions will be placed in `figure` and `table` environments, respectively.
+This guide is built around a new resource developed at the Machine Learning for Social Science Lab called the Global Census of Covid-19 Counts (GC3). This is a single normalized and georeferenced aggregation of all of the other public aggregations of COVID-19 counts data available. We are currently aggregating `r lhs_long_clean$dataset %>% unique() %>% length()` databases, who are in turn scraping and aggregating over ten thousand sources like public statements, news reports, and individual health department websites. <!-- Using an existing system we have in development, the Named Entities for Social Science knowledge graph, we were able to convert all of the disparate natural language geographic names to a single uniform key index, which can be taken directly to other standard databases of demographic and medical information. --> Only by mosaicing all of these different resource together (`r lhs_long %>% nrow() %>% comma()` observations and growing), are we able to finally provide full temporal coverage over the entire COVID-19 pandemic, and full spatial coverage over all countries in the world and in most places states/provinces as well. We are now able to track counts of confirmed cases and deaths in `r lhs_long_clean %>% pull(gid_geonameid_wikidata_id) %>% unique() %>% length() %>% comma()` locations, and number of tests performed in `r lhs_long_clean %>% filter(!is.na(tested_people) | !is.na(tested_samples)) %>% pull(gid_geonameid_wikidata_id) %>% unique() %>% length() %>% comma()` locations.
 
-```{r nice-fig, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
+This book is a deep dive into what problems and opportunities you can expect to find in these data. It is organized in order from simpler issues of data acquisition and aggregation, to more complicated questions of bias and latent true measurement.
+
+## Definitions and Unit of Analysis
+
+## Summary of the Findings (TLDR)
+
+
+```{r nice-fig, eval=F, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
+
+#You can label chapter and section titles using `{#label}` after them, e.g., we can reference Chapter \@ref(intro). If you do not manually label them, there will be automatic labels anyway, e.g., Chapter \@ref(methods).
+#Figures and tables with captions will be placed in `figure` and `table` environments, respectively.
+
 par(mar = c(4, 4, .1, .1))
 plot(pressure, type = 'b', pch = 19)
 ```
 
-Reference a figure by its code chunk label with the `fig:` prefix, e.g., see Figure \@ref(fig:nice-fig). Similarly, you can reference tables generated from `knitr::kable()`, e.g., see Table \@ref(tab:nice-tab).
 
-```{r nice-tab, tidy=FALSE}
+```{r nice-tab, eval=F , tidy=FALSE}
+#Reference a figure by its code chunk label with the `fig:` prefix, e.g., see Figure \@ref(fig:nice-fig). Similarly, you can reference tables generated from `knitr::kable()`, e.g., see Table \@ref(tab:nice-tab).
+
 knitr::kable(
   head(iris, 20), caption = 'Here is a nice table!',
   booktabs = TRUE

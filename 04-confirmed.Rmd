@@ -1,0 +1,8 @@
+# Common Measures of Interest
+
+
+## R0 and R
+
+## Case Fatality Rate (CFR)
+
+## Percent Positive
