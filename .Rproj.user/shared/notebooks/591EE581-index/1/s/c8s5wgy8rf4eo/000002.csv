@@ -1,0 +1,14 @@
+"0","title: ""How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data""
+author: ""Yihui Xie""
+date: ""`r Sys.Date()`""
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+description: ""This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook.""
+---"
+"2","/bin/sh: 1: ---: not found
+"

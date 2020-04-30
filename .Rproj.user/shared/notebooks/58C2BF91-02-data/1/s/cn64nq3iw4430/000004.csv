@@ -1,0 +1,3 @@
+"0","lhs_long_clean %>% count(dataset) %>% arrange(-n) %>% DT::datatable(options = list(pageLength = 20, autoWidth = TRUE))"
+"2","Error in count(., dataset) : object 'dataset' not found
+"

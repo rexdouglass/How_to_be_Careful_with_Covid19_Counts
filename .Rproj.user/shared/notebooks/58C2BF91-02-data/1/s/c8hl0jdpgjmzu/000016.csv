@@ -1,0 +1,3 @@
+"0","library(UpSetR) #install.packages('UpSetR')"
+"0","upset(temp %>% as.data.frame(), nsets = 25, nintersects = 30, mb.ratio = c(0.4, 0.6),"
+"0","      order.by = c(""freq"", ""degree""), decreasing = c(T,FALSE))"

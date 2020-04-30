@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Tests | How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data</title>
+  <meta name="description" content="Chapter 3 Tests | How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Tests | How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Tests | How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data" />
+  
+  
+  
+
+<meta name="author" content="Rex W. Douglass" />
+
+
+<meta name="date" content="2020-04-30" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="global-covid-19-count-data.html"/>
+<link rel="next" href="common-measures-of-interest.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.12/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">How to be Careful with Covid-19 Counts</a></li>
+<li><a href="https://www.rexdouglass.com" target="_blank">Rex W. Douglass</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#definitions-and-unit-of-analysis"><i class="fa fa-check"></i><b>1.1</b> Definitions and Unit of Analysis</a></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#summary-of-the-findings-tldr"><i class="fa fa-check"></i><b>1.2</b> Summary of the Findings (TLDR)</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html"><i class="fa fa-check"></i><b>2</b> Global COVID-19 Count Data</a><ul>
+<li class="chapter" data-level="2.1" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#what-data-are-available"><i class="fa fa-check"></i><b>2.1</b> What data are available?</a></li>
+<li class="chapter" data-level="2.2" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#what-is-their-geographic-coverage"><i class="fa fa-check"></i><b>2.2</b> What is their geographic coverage?</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#country-level-data-availability"><i class="fa fa-check"></i><b>2.2.1</b> Country Level Data Availability</a></li>
+<li class="chapter" data-level="2.2.2" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#stateprovince-level-data-availability"><i class="fa fa-check"></i><b>2.2.2</b> State/Province Level Data Availability</a></li>
+<li class="chapter" data-level="2.2.3" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#county-district-level-data-availability"><i class="fa fa-check"></i><b>2.2.3</b> County District Level Data Availability</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#what-is-their-temporal-coverage"><i class="fa fa-check"></i><b>2.3</b> What is their temporal coverage?</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#comparisons"><i class="fa fa-check"></i><b>2.3.1</b> Comparisons</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#where-and-how-do-they-disagree"><i class="fa fa-check"></i><b>2.4</b> Where and How do they Disagree?</a></li>
+<li class="chapter" data-level="2.5" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#takeaways"><i class="fa fa-check"></i><b>2.5</b> Takeaways</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="tests.html"><a href="tests.html"><i class="fa fa-check"></i><b>3</b> Tests</a><ul>
+<li class="chapter" data-level="3.1" data-path="tests.html"><a href="tests.html#tested-people-versus-tested-samples"><i class="fa fa-check"></i><b>3.1</b> Tested People versus Tested Samples</a></li>
+<li class="chapter" data-level="3.2" data-path="tests.html"><a href="tests.html#interpolate-within-observed"><i class="fa fa-check"></i><b>3.2</b> Interpolate Within Observed</a></li>
+<li class="chapter" data-level="3.3" data-path="tests.html"><a href="tests.html#interplate-prior-to-observed"><i class="fa fa-check"></i><b>3.3</b> Interplate Prior to Observed</a></li>
+<li class="chapter" data-level="3.4" data-path="tests.html"><a href="tests.html#interpolate-subnationally"><i class="fa fa-check"></i><b>3.4</b> Interpolate Subnationally</a></li>
+<li class="chapter" data-level="3.5" data-path="tests.html"><a href="tests.html#explaining-variation-in-testing"><i class="fa fa-check"></i><b>3.5</b> Explaining Variation in Testing</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="common-measures-of-interest.html"><a href="common-measures-of-interest.html"><i class="fa fa-check"></i><b>4</b> Common Measures of Interest</a><ul>
+<li class="chapter" data-level="4.1" data-path="common-measures-of-interest.html"><a href="common-measures-of-interest.html#r0-and-r"><i class="fa fa-check"></i><b>4.1</b> R0 and R</a></li>
+<li class="chapter" data-level="4.2" data-path="common-measures-of-interest.html"><a href="common-measures-of-interest.html#case-fatality-rate-cfr"><i class="fa fa-check"></i><b>4.2</b> Case Fatality Rate (CFR)</a></li>
+<li class="chapter" data-level="4.3" data-path="common-measures-of-interest.html"><a href="common-measures-of-interest.html#percent-positive"><i class="fa fa-check"></i><b>4.3</b> Percent Positive</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="deaths.html"><a href="deaths.html"><i class="fa fa-check"></i><b>5</b> Deaths</a></li>
+<li class="chapter" data-level="6" data-path="actual-infections.html"><a href="actual-infections.html"><i class="fa fa-check"></i><b>6</b> Actual Infections</a></li>
+<li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="tests" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> Tests</h1>
+<div id="tested-people-versus-tested-samples" class="section level2">
+<h2><span class="header-section-number">3.1</span> Tested People versus Tested Samples</h2>
+</div>
+<div id="interpolate-within-observed" class="section level2">
+<h2><span class="header-section-number">3.2</span> Interpolate Within Observed</h2>
+</div>
+<div id="interplate-prior-to-observed" class="section level2">
+<h2><span class="header-section-number">3.3</span> Interplate Prior to Observed</h2>
+</div>
+<div id="interpolate-subnationally" class="section level2">
+<h2><span class="header-section-number">3.4</span> Interpolate Subnationally</h2>
+</div>
+<div id="explaining-variation-in-testing" class="section level2">
+<h2><span class="header-section-number">3.5</span> Explaining Variation in Testing</h2>
+<p>South Korea</p>
+<p>Vietnam
+<a href="https://www.reuters.com/article/us-health-coronavirus-vietnam-fight-insi-idUSKBN22B34H" class="uri">https://www.reuters.com/article/us-health-coronavirus-vietnam-fight-insi-idUSKBN22B34H</a></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="global-covid-19-count-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="common-measures-of-interest.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/03-tests.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["HowToBeCarefulWithCovid19Counts.pdf", "HowToBeCarefulWithCovid19Counts.epub"],
+"toc": {
+"collapse": "none"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

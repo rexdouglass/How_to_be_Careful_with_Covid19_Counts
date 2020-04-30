@@ -1,0 +1,8 @@
+"0",""
+"0","p0_testing <- gadm36_levels_0 %>% "
+"0","      left_join(lhs_long_place_sources_testing %>% dplyr::select(gid=gid, percent_of_days_with_testing) %>%  left_join( gadm36_levels_0 %>% as.data.frame() %>% dplyr::select(gid=GID_0, NAME_0)  %>% distinct()  )"
+"0","                ) %>%"
+"0","      #replace_na(list(datasets_n = 0)) %>% "
+"0","      ggplot() + geom_sf(aes(fill = percent_of_days_with_testing)) +"
+"0","      scale_fill_gradient(low=""red"", high=""green"") +"
+"0","      theme_bw() + ggtitle(""Percent of Days with Testing counts"")"

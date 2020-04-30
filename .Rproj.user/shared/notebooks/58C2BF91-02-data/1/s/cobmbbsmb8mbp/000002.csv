@@ -1,0 +1,6 @@
+"0","knitr::opts_chunk$set( out.width='100%', fig.asp=NULL, fig.align='center', echo=F, warning=FALSE,message=FALSE,error=FALSE, results='hide', cache=T  ) "
+"0",""
+"0","#Notes to self"
+"0","#It's not like R notebook you have the knit every time you want to update html, you can't just save"
+"0","#You don't have to rerun the code or rebuild the whole book though."
+"0",""
