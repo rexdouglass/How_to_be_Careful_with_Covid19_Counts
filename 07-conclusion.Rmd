@@ -47,8 +47,4 @@ library(DT)
 ```
 
 
-# Actual Infections
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+# Conclusion

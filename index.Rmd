@@ -10,6 +10,7 @@ biblio-style: apalike
 link-citations: yes
 github-repo: rstudio/bookdown-demo
 description: ""
+always_allow_html: yes
 ---
 
     
@@ -42,4 +43,53 @@ knitr::opts_chunk$set( out.width='100%', fig.align='center', echo=F, warning=FAL
 knitr::write_bib(c(
   .packages(), 'bookdown', 'knitr', 'rmarkdown'
 ), 'packages.bib')
+```
+
+
+
+```{r}
+#Library Loads
+library(scales) 
+library(tidyverse)
+# stable version on CRAN
+#install.packages("bookdown")
+# or development version on GitHub
+# devtools::install_github('rstudio/bookdown')
+#libraries
+library(lubridate)
+library(tidyverse)
+
+#devtools::install_github("ropensci/USAboundaries")
+#devtools::install_github("ropensci/USAboundariesData")
+library(USAboundaries) ; #install.packages('USAboundaries')
+data(state_codes)
+
+library(tidyverse)
+library(scales)
+library(gghighlight)
+library(lubridate)
+library(R0)  # consider moving all library commands to top -- this one was in a loop below
+
+library(WikidataR)
+library(countrycode)
+
+library(usmap) ; # install.packages('usmap')
+data(statepop)
+#devtools::install_github("ropensci/USAboundaries")
+#devtools::install_github("ropensci/USAboundariesData")
+library(USAboundaries) ; #install.packages('USAboundaries')
+data(state_codes)
+
+library(tidyverse)
+library(sf)
+
+library(jsonlite)
+
+#This is too slow it's downloading each
+library(GADMTools)
+library(strucchange) ; #install.packages('strucchange')
+library(tsibble)
+
+library(patchwork)
+library(DT)
 ```
