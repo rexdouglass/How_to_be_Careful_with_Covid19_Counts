@@ -60,70 +60,6 @@
 <script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
 
 
-<style type="text/css">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-</style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 </head>
@@ -142,9 +78,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="https://www.rexdouglass.com" target="_blank">Rex W. Douglass</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
-<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#definitions-and-unit-of-analysis"><i class="fa fa-check"></i><b>1.1</b> Definitions and Unit of Analysis</a></li>
-<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#summary-of-the-findings-tldr"><i class="fa fa-check"></i><b>1.2</b> Summary of the Findings (TLDR)</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Executive Summary</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#key-takeaways-tldr"><i class="fa fa-check"></i><b>1.1</b> Key Takeaways (TLDR)</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html"><i class="fa fa-check"></i><b>2</b> Global COVID-19 Count Data</a><ul>
 <li class="chapter" data-level="2.1" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#what-data-are-available"><i class="fa fa-check"></i><b>2.1</b> What data are available?</a></li>
@@ -198,15 +133,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p class="date"><em>2020-04-30</em></p>
 </div>
 <div id="intro" class="section level1">
-<h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
+<h1><span class="header-section-number">Chapter 1</span> Executive Summary</h1>
 <p>How should we interpret the endless stream of figures and maps of COVID-19 produced by health departments and organizations around the world? For better or worse, we primarily experience large complicated events through counts- How many are dead?; How many are sick?; How many tests did we perform? These are universal questions, immediately accessible to both the producers of information like doctors and scientists and consumers of information like policy makers and citizens. For anyone who regularly works with the answers to those questions, the actual data, you know that every one of those simple numbers in a cell needs a big asterisks pointing to a long footnote explaining all of the problems in developing and using that number. This book is that footnote for COVID-19 counts. It is intended as a practical guide for using COVID-19 data, and all of the regularities and subtle gotchas you can expect to find.</p>
 <p>This guide is built around a new resource developed at the Machine Learning for Social Science Lab called the Global Census of Covid-19 Counts (GC3). This is a single normalized and georeferenced aggregation of all of the other public aggregations of COVID-19 counts data available. We are currently aggregating 23 databases, who are in turn scraping and aggregating over ten thousand sources like public statements, news reports, and individual health department websites. <!-- Using an existing system we have in development, the Named Entities for Social Science knowledge graph, we were able to convert all of the disparate natural language geographic names to a single uniform key index, which can be taken directly to other standard databases of demographic and medical information. --> Only by mosaicing all of these different resource together (782,263 observations and growing), are we able to finally provide full temporal coverage over the entire COVID-19 pandemic, and full spatial coverage over all countries in the world and in most places states/provinces as well. We are now able to track counts of confirmed cases and deaths in 4,851 locations, and number of tests performed in 1,272 locations.</p>
 <p>This book is a deep dive into what problems and opportunities you can expect to find in these data. It is organized in order from simpler issues of data acquisition and aggregation, to more complicated questions of bias and latent true measurement.</p>
-<div id="definitions-and-unit-of-analysis" class="section level2">
-<h2><span class="header-section-number">1.1</span> Definitions and Unit of Analysis</h2>
-</div>
-<div id="summary-of-the-findings-tldr" class="section level2">
-<h2><span class="header-section-number">1.2</span> Summary of the Findings (TLDR)</h2>
+<div id="key-takeaways-tldr" class="section level2">
+<h2><span class="header-section-number">1.1</span> Key Takeaways (TLDR)</h2>
 <p>You can write citations, too. For example, we are using the <strong>bookdown</strong> package <span class="citation">(Xie <a href="#ref-R-bookdown" role="doc-biblioref">2020</a>)</span> in this sample book, which was built on top of R Markdown and <strong>knitr</strong> <span class="citation">(Xie <a href="#ref-xie2015" role="doc-biblioref">2015</a>)</span>.</p>
 
 </div>

@@ -160,7 +160,7 @@ lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/
 
 ```
 
-# Introduction {#intro}
+# Executive Summary {#intro}
 
 How should we interpret the endless stream of figures and maps of COVID-19 produced by health departments and organizations around the world? For better or worse, we primarily experience large complicated events through counts- How many are dead?; How many are sick?; How many tests did we perform? These are universal questions, immediately accessible to both the producers of information like doctors and scientists and consumers of information like policy makers and citizens. For anyone who regularly works with the answers to those questions, the actual data, you know that every one of those simple numbers in a cell needs a big asterisks pointing to a long footnote explaining all of the problems in developing and using that number. This book is that footnote for COVID-19 counts. It is intended as a practical guide for using COVID-19 data, and all of the regularities and subtle gotchas you can expect to find.
 
@@ -168,9 +168,7 @@ This guide is built around a new resource developed at the Machine Learning for 
 
 This book is a deep dive into what problems and opportunities you can expect to find in these data. It is organized in order from simpler issues of data acquisition and aggregation, to more complicated questions of bias and latent true measurement.
 
-## Definitions and Unit of Analysis
-
-## Summary of the Findings (TLDR)
+## Key Takeaways (TLDR)
 
 
 ```{r nice-fig, eval=F, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
