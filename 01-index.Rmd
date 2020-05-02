@@ -19,52 +19,43 @@ library(tidyverse)
 # devtools::install_github('rstudio/bookdown')
 #libraries
 library(lubridate)
-library(tidyverse)
 
 #devtools::install_github("ropensci/USAboundaries")
 #devtools::install_github("ropensci/USAboundariesData")
-library(USAboundaries) ; #install.packages('USAboundaries')
-data(state_codes)
+#library(USAboundaries) ; #install.packages('USAboundaries')
+#data(state_codes)
 
-library(tidyverse)
-library(scales)
 library(gghighlight)
 library(lubridate)
-library(R0)  # consider moving all library commands to top -- this one was in a loop below
+#library(R0)  # consider moving all library commands to top -- this one was in a loop below
 
-library(WikidataR)
-library(countrycode)
+#library(WikidataR)
+#library(countrycode)
 
-library(usmap) ; # install.packages('usmap')
-data(statepop)
+#library(usmap) ; # install.packages('usmap')
+#data(statepop)
 #devtools::install_github("ropensci/USAboundaries")
 #devtools::install_github("ropensci/USAboundariesData")
-library(USAboundaries) ; #install.packages('USAboundaries')
-data(state_codes)
+#library(USAboundaries) ; #install.packages('USAboundaries')
+#data(state_codes)
 
-library(tidyverse)
 library(sf)
-
 library(jsonlite)
 
 #This is too slow it's downloading each
-library(GADMTools)
-library(strucchange) ; #install.packages('strucchange')
+#library(GADMTools)
+#library(strucchange) ; #install.packages('strucchange')
 library(tsibble)
 
 library(patchwork)
 library(DT)
-```
 
-
-```{r}
 #Library Loads
-library(scales) 
-library(tidyverse)
 # stable version on CRAN
 #install.packages("bookdown")
 # or development version on GitHub
 # devtools::install_github('rstudio/bookdown')
+
 
 ```
 
@@ -95,17 +86,26 @@ lhs_long_clean <- lhs_long %>% as.data.frame() %>% ungroup() %>%
                   filter(!is.na(date_asdate)) %>%
                   
                   #First drop anything that's negative. Shouldn't be any negatives.
-                  filter(is.na(confirmed) | confirmed>=0) %>%
+                  filter(is.na(confirmed) | confirmed>=2) %>% #we're also going to require confirmed to be at least 2 or more. There's too many long tails of 1s
                   filter(is.na(deaths) | deaths>=0) %>%
                   filter(is.na(tested_people) | tested_people>=0) %>%
                   filter(is.na(tested_samples) | tested_samples>=0) %>%
                   
-                  #Then set 0s to NA, we don't trust NAs
+                  #Also reject any where deaths are greater than confirmed
+                  filter(is.na(confirmed) | is.na(deaths) | confirmed>=deaths) %>%
+
+                  #Then set 0s to NA, we don't trust 0s
                   mutate(confirmed=ifelse(confirmed==0, NA, confirmed)) %>%
                   mutate(deaths=ifelse(deaths==0, NA, deaths)) %>%
                   mutate(tested_people=ifelse(tested_people==0, NA, tested_people)) %>%
                   mutate(tested_samples=ifelse(tested_samples==0, NA, tested_samples)) %>%
-                
+
+                  #remove duplicate dates
+                  dplyr::group_by(  dataset_gid_geonameid_wikidata_id ) %>%  #it's not grouping correctly all of a sudden?
+                    dplyr::arrange(date_asdate) %>%
+                    filter(!duplicated(date_asdate) ) %>%
+                  ungroup() %>% 
+                                    
                   #Then check first differences and drop anything that doesn't weakly increase monotonically
                   dplyr::group_by(  dataset_gid_geonameid_wikidata_id ) %>%  #it's not grouping correctly all of a sudden?
                     dplyr::arrange(date_asdate) %>%
@@ -124,26 +124,25 @@ lhs_long_clean <- lhs_long %>% as.data.frame() %>% ungroup() %>%
                           (is.na(tested_people) | tested_people>=tested_people_cummax) &  #never allow for a reversal
                           (is.na(tested_samples) | tested_samples>=tested_samples_cummax)  #never allow for a reversal
                           ) %>%
-  #we're going to go one step further and require either confirmed or tested to be strictly higher
-  #In words, during an episode we don't believe reports mean "no new cases" just no new good reporting
-  #metabiota is the worst offender here so restricting it to just that
-  filter( !(
-            dataset=="metabiota" & #is metabiota
-            (!is.na(confirmed) &   #with a non missing confirmed
-              confirmed<=confirmed_cummax ) #that is equal to or less than the cumulative max until then.
-            ) #reject these
-          ) %>% #metabiota is really problematic 90% of what we're doing is trying to account for it
-  
-  #Also reject any where deaths are greater than confirmed
-  filter(is.na(confirmed) | is.na(deaths) | confirmed>=deaths) #%>%
-  
-  #also reject any where confirmed doesn't vary at all at that location
-  #I should do this but it's throwing weird warnings
-  #group_by( gid_geonameid_wikidata_id) %>% #
-  #  filter( confirmed %>% unique() %>% length() > 1 ) %>%
-  #ungroup()
+                    
+                  #we're going to go one step further and require either confirmed or tested to be strictly higher
+                  #In words, during an episode we don't believe reports mean "no new cases" just no new good reporting
+                  #metabiota is the worst offender here so restricting it to just that
+                  filter( !(
+                            dataset=="metabiota" & #is metabiota
+                            (!is.na(confirmed) &   #with a non missing confirmed
+                              confirmed<=confirmed_cummax ) #that is equal to or less than the cumulative max until then.
+                            ) #reject these
+                          ) #%>% #metabiota is really problematic 90% of what we're doing is trying to account for it
+                  
+                  
+                  #also reject any where confirmed doesn't vary at all at that location
+                  #I should do this but it's throwing weird warnings
+                  #group_by( gid_geonameid_wikidata_id) %>% #
+                  #  filter( confirmed %>% unique() %>% length() > 1 ) %>%
+                  #ungroup()
 
-dim(lhs_long_clean) #675,696
+dim(lhs_long_clean) #675,708 #675,696
 
 saveRDS(lhs_long_clean,
         "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleand.Rds")
@@ -152,11 +151,8 @@ saveRDS(lhs_long_clean,
 
 
 ```{r}
-#Data Loads
-lhs_long <- readRDS("/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long.Rds")
-#Data loads
-lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleand.Rds")
 
+lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleand.Rds")
 
 ```
 

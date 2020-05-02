@@ -8,6 +8,8 @@ knitr::opts_chunk$set( out.width='100%', fig.asp=NULL, fig.align='center', echo=
 
 ```
 
+
+
 ```{r}
 #Library Loads
 library(scales) 
@@ -18,51 +20,55 @@ library(tidyverse)
 # devtools::install_github('rstudio/bookdown')
 #libraries
 library(lubridate)
-library(tidyverse)
 
 #devtools::install_github("ropensci/USAboundaries")
 #devtools::install_github("ropensci/USAboundariesData")
-library(USAboundaries) ; #install.packages('USAboundaries')
-data(state_codes)
+#library(USAboundaries) ; #install.packages('USAboundaries')
+#data(state_codes)
 
-library(tidyverse)
-library(scales)
 library(gghighlight)
 library(lubridate)
-library(R0)  # consider moving all library commands to top -- this one was in a loop below
+#library(R0)  # consider moving all library commands to top -- this one was in a loop below
 
-library(WikidataR)
-library(countrycode)
+#library(WikidataR)
+#library(countrycode)
 
-library(usmap) ; # install.packages('usmap')
-data(statepop)
+#library(usmap) ; # install.packages('usmap')
+#data(statepop)
 #devtools::install_github("ropensci/USAboundaries")
 #devtools::install_github("ropensci/USAboundariesData")
-library(USAboundaries) ; #install.packages('USAboundaries')
-data(state_codes)
+#library(USAboundaries) ; #install.packages('USAboundaries')
+#data(state_codes)
 
-library(tidyverse)
 library(sf)
-
 library(jsonlite)
 
 #This is too slow it's downloading each
-library(GADMTools)
-library(strucchange) ; #install.packages('strucchange')
+#library(GADMTools)
+#library(strucchange) ; #install.packages('strucchange')
 library(tsibble)
 
 library(patchwork)
 library(DT)
+
+#Library Loads
+# stable version on CRAN
+#install.packages("bookdown")
+# or development version on GitHub
+# devtools::install_github('rstudio/bookdown')
+
+
 ```
+
+
 
 
 ```{r}
 #Data Loads
-lhs_long <- readRDS("/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long.Rds")
+#lhs_long <- readRDS("/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long.Rds")
 #Data loads
 lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleand.Rds")
-
-#dim(lhs_long) #187,305
+dim(lhs_long_clean) #675,708 #187,305
 #lhs_long_clean$dataset
 
 ```
@@ -70,6 +76,27 @@ lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/
 
 # Global COVID-19 Count Data
 
+## Takeaways
+
+Any data aggregation and cleaning approach will have to deal with the following issues
+
+* Missingness
+    + Prior to the first reported observation
+    + After the last reported observation
+    + Within a time series between observations
+    + Unbalanced across different sources
+* Structural Changes
+    + Changes in reporting criteria/definitions
+    + Changes in sourcing for unerlying data
+* Disagreement
+    + One or more sources report different numbers
+* Errors
+    + Outliers
+    + Merging errors
+* Bias
+    + Correlation between missingness and measurement
+    + Attenuation bias
+    
 ## What data are available?
 
 The Global Census of Covid-19 Counts (GC3) currently aggregates `r lhs_long_clean$dataset %>% unique() %>% length()` databases. The databases vary drastically in size, scope, collection method, and purpose. On the small end are github repositories built around collecting a single country's published statistics, often available in an unstructured form on a government website in a native language. Others are official government statistics reported directly to and compiled by international organizations, like the World Health Organization (WHO) or the European Centre for Disease Prevention and Control. Some are news organizations that collect and compile official government statistics, like the New York Times and Reuters. Nonprofits like the Covidtracking Project compile records on specific issues like testing. Wikipedia provides an interface for a massive army of volunteers to enter in statistics into tabular formats that can later be scraped.  The largest and most comprehensive scraping effort is the Corona Data Scraper from the Covid Atlas which only consumes sources directly from government and health organizations (excluding news and wikipeda). These all in turn are then ingested by larger aggregation projects. Johns Hopkins University Center for Systems Science and Engineering (JHU-CSSE) is the most widely used aggregator by downstream projects. Both Microsoft's Bing research Unit and Yahoo! have in turn recently made available their knowledge graph coverage of Covid-19 counts.
@@ -108,24 +135,33 @@ lhs_long_clean %>% dplyr::count(dataset) %>% arrange(-n) %>% DT::datatable(optio
 lhs_long_clean_confirmed_wide <-
                               lhs_long_clean %>%
                               filter(!is.na(wikidata_id)) %>% #the NA_NA_NA obs were screwing with us
-                              dplyr::select(dataset, gid_geonameid_wikidata_id, date_asdate, confirmed) %>%
+                              dplyr::mutate(tested= coalesce(tested_people, tested_samples) ) %>%
+                              dplyr::select(dataset, gid_geonameid_wikidata_id, date_asdate, confirmed, deaths, tested) %>%
                               filter(!is.na(gid_geonameid_wikidata_id) & !is.na(date_asdate)) %>%
-                              filter(!is.na(confirmed) & confirmed>0 ) %>%
                               group_by(dataset, gid_geonameid_wikidata_id, date_asdate) %>%
-                                dplyr::summarise(confirmed= max(confirmed, na.rm=T)) %>%
+                                dplyr::summarise(
+                                                confirmed= suppressWarnings(max(confirmed, na.rm=T)),
+                                                 deaths   = suppressWarnings( max(deaths, na.rm=T)),
+                                                 tested   = suppressWarnings(max(tested, na.rm=T))
+                                                 )%>%
                               ungroup() %>%
-                              pivot_wider(names_from = dataset, values_from = confirmed ) %>%
+                              mutate_if(is.numeric, list(~na_if(abs(.), Inf))) %>% distinct() %>%
+                              pivot_longer(cols=c(confirmed, deaths, tested), values_to = "count") %>%
+                              filter(!is.na(count)) %>%
+                              pivot_wider(names_from = dataset, values_from = count ) %>%
                               mutate_if(is.numeric, list(~na_if(abs(.), Inf))) %>% distinct()
-dim(lhs_long_clean_confirmed_wide) #154,499 154k location days
+dim(lhs_long_clean_confirmed_wide) #253,458 location-day-variable obs #154,499 154k location days
 
 temp <- lhs_long_clean_confirmed_wide  %>% mutate_if(is.numeric, replace_na, 0) %>% mutate_if(is.numeric, ~  as.numeric(.>0 )) #%>% dplyr::select(-gid_geonameid_wikidata_id, -date_asdate)
+
 ```
 
-The unit of observation in our data is the location-day. The Upset plot in Figure \@ref(fig:upset1) shows the number of unique location-day observations provided by each database, as well as for those available on in two datasets. Which database will provide the most unique information is difficult to tell apriori. The most unique contributions come from the Corona Data Scraper Project, which might be anticipated by their overall size. The second most unique observations however comes from Wikipedia which is surprising because our treatment of it is currently ad hoc and it should already be ingested by other sources. It goes to show that no single source, or even no small combination of sources, is sufficient to provide full temporal and spatial coverage over even this relatively brief period of the Covid-19 pandemic.
+The unit of observation in our data is the location-day-outcome, e.g. Texas-April 2-Deaths. The Upset plot below shows the number of unique location-day-outcome observations provided by each database along the vetical axis and the number of unique observations found only in that database an no other. Which databases will provide the most unique information is difficult to tell apriori. In general, the databases with the most observations and that rely on direct collection from raw sources rather than aggregation of others, tend to provide the most. For example, Corona Data Scraper provides both the most total and most unique observations.
+The most unique contributions come from the Corona Data Scraper Project, which might be anticipated by their overall size. The second most unique observations however comes from Wikipedia which is surprising because our treatment of it is currently ad hoc and it should already be ingested by other sources. It goes to show that no single source, or even no small combination of sources, is sufficient to provide full temporal and spatial coverage over even this relatively brief period of the Covid-19 pandemic.
 
-```{r upset1}
+```{r upset}
 library(UpSetR) #install.packages('UpSetR')
-upset(temp %>% as.data.frame(), nsets = 25, nintersects = 30, mb.ratio = c(0.4, 0.6),
+upset(temp %>% as.data.frame(), nsets = 23, nintersects = 22, mb.ratio = c(0.4, 0.6),
       order.by = c("freq", "degree"), decreasing = c(T,FALSE))
 detach(package:UpSetR, unload=TRUE) #I currently suspect this of breaking dplyr in really subtle quite ways that are noooot good.
 ```
@@ -266,7 +302,7 @@ p2
 
 ## What is their temporal coverage?
 
-### Comparisons
+### Coverage Across Three Countries
 
 Figures x,y,z illustrate the problem of data coverage for 3 countries, China, Italy, and the U.S.
 
@@ -297,7 +333,7 @@ p_over_time_by_source_china <- test %>%
 China outright refuses to release daily counts of testing. Only three databases document the beginning of the outbreak, the ECDC, the WHO, and Yahoo. On April 17, China [changed its reporting](http://en.nhc.gov.cn/2020-04/17/c_79285.htm) which added 1,290 more deaths for Wuhan city only. The change is not retrospective, it shows up only a sharp discontinuity across multiple datasets. 
 
 ```{r p_over_time_by_source_china1}
-p_over_time_by_source_china
+p_over_time_by_source_china 
 ```
 
 
@@ -581,25 +617,5 @@ lhs_long_clean_pairwise_location %>% arrange(-resid_perc_mean) %>% DT::datatable
 
 
 
-## Takeaways
-
-Any data aggregation and cleaning approach will have to deal with the following issues
-
-* Missingness
-    + Prior to the first reported observation
-    + After the last reported observation
-    + Within a time series between observations
-    + Unbalanced across different sources
-* Structural Changes
-    + Changes in reporting criteria/definitions
-    + Changes in sourcing for unerlying data
-* Disagreement
-    + One or more sources report different numbers
-* Errors
-    + Outliers
-    + Merging errors
-* Bias
-    + Correlation between missingness and measurement
-    + Attenuation bias
     
 
