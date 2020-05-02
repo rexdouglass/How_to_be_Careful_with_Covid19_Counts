@@ -13,7 +13,6 @@ description: ""
 always_allow_html: yes
 ---
 
-    
 
 ```{r,eval=T, warning=FALSE,message=FALSE,error=FALSE, results='hide' , include=FALSE}
 knitr::opts_chunk$set( out.width='100%', fig.align='center', echo=F, warning=FALSE,message=FALSE,error=FALSE, results='hide', cache=T  ) 
