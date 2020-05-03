@@ -11,8 +11,8 @@ knitr::opts_chunk$set( out.width='100%', fig.asp=NULL, fig.align='center', echo=
 
 ```{r}
 #Library Loads
-library(scales) 
 library(tidyverse)
+library(scales) 
 # stable version on CRAN
 #install.packages("bookdown")
 # or development version on GitHub
@@ -25,8 +25,8 @@ library(lubridate)
 #library(USAboundaries) ; #install.packages('USAboundaries')
 #data(state_codes)
 
-library(gghighlight)
-library(lubridate)
+#library(gghighlight)
+#library(lubridate)
 #library(R0)  # consider moving all library commands to top -- this one was in a loop below
 
 #library(WikidataR)
@@ -39,16 +39,16 @@ library(lubridate)
 #library(USAboundaries) ; #install.packages('USAboundaries')
 #data(state_codes)
 
-library(sf)
-library(jsonlite)
+#library(sf)
+#library(jsonlite)
 
 #This is too slow it's downloading each
 #library(GADMTools)
 #library(strucchange) ; #install.packages('strucchange')
-library(tsibble)
+#library(tsibble)
 
-library(patchwork)
-library(DT)
+#library(patchwork)
+#library(DT)
 
 #Library Loads
 # stable version on CRAN
@@ -156,7 +156,7 @@ lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/
 
 ```
 
-# Executive Summary {#intro}
+# Executive Summary {#index}
 
 How should we interpret the endless stream of figures and maps of COVID-19 produced by health departments and organizations around the world? For better or worse, we primarily experience large complicated events through counts- How many are dead?; How many are sick?; How many tests did we perform? These are universal questions, immediately accessible to both the producers of information like doctors and scientists and consumers of information like policy makers and citizens. For anyone who regularly works with the answers to those questions, the actual data, you know that every one of those simple numbers in a cell needs a big asterisks pointing to a long footnote explaining all of the problems in developing and using that number. This book is that footnote for COVID-19 counts. It is intended as a practical guide for using COVID-19 data, and all of the regularities and subtle gotchas you can expect to find.
 
