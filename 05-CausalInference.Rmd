@@ -1,4 +1,5 @@
 
+
 ```{r}
 #Library Loads
 library(scales) 
@@ -47,8 +48,4 @@ library(DT)
 ```
 
 
-# Actual Infections
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+# COVID-19 Causal-Inference

@@ -80,7 +80,7 @@
 
 \title{How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data}
 \author{Rex W. Douglass}
-\date{2020-05-02}
+\date{2020-05-04}
 
 \begin{document}
 \maketitle
@@ -89,12 +89,12 @@
 \setcounter{tocdepth}{1}
 \tableofcontents
 }
-\hypertarget{intro}{%
-\chapter{Executive Summary}\label{intro}}
+\hypertarget{index}{%
+\chapter{Executive Summary}\label{index}}
 
-How should we interpret the endless stream of figures and maps of COVID-19 produced by health departments and organizations around the world? For better or worse, we primarily experience large complicated events through counts- How many are dead?; How many are sick?; How many tests did we perform? These are universal questions, immediately accessible to both the producers of information like doctors and scientists and consumers of information like policy makers and citizens. For anyone who regularly works with the answers to those questions, the actual data, you know that every one of those simple numbers in a cell needs a big asterisks pointing to a long footnote explaining all of the problems in developing and using that number. This book is that footnote for COVID-19 counts. It is intended as a practical guide for using COVID-19 data, and all of the regularities and subtle gotchas you can expect to find.
+How should we interpret the endless stream of figures of COVID-19 counts produced by health departments and organizations around the world? For better or worse, we primarily experience large complicated events through counts- How many are dead?; How many are sick?; How many tests were performed? These are universal questions, immediately accessible to both the producers of information like doctors and scientists and consumers of information like policy makers and citizens. However, for anyone who regularly works with the answers to those questions, actual data, they know that every one of those simple numbers in a cell needs a big asterisks pointing to a long footnote explaining all of the problems in developing and using that statistic. This book is that footnote for COVID-19 counts. It is intended as a practical guide for using COVID-19 data, and all of the regularities and subtle gotchas you can expect to find.
 
-This guide is built around a new resource developed at the Machine Learning for Social Science Lab called the Global Census of Covid-19 Counts (GC3). This is a single normalized and georeferenced aggregation of all of the other public aggregations of COVID-19 counts data available. We are currently aggregating 27 databases, who are in turn scraping and aggregating over ten thousand sources like public statements, news reports, and individual health department websites. Only by mosaicing all of these different resource together (917,149 observations and growing), are we able to finally provide full temporal coverage over the entire COVID-19 pandemic, and full spatial coverage over all countries in the world and in most places states/provinces as well. We are now able to track counts of confirmed cases and deaths in 5,168 locations, and number of tests performed in 1,233 locations.
+This guide is built around a new resource called the Global Census of Covid-19 Counts (GC3). It is a single normalized and georeferenced aggregation of all of the other public aggregations of COVID-19 counts data available. It currently aggregates 27 databases, who are in turn scraping and aggregating over ten thousand sources like public statements, news reports, and individual health department websites. Only by mosaicing all of these different sources together (917,555 observations and growing), are we able to finally provide full temporal coverage over the entire COVID-19 pandemic, and full spatial coverage over all countries in the world and in most places states/provinces as well. We are now able to track counts of confirmed cases and deaths in 5,168 locations, and number of tests performed in 1,233 locations.
 
 This book is a deep dive into what problems and opportunities you can expect to find in these data. It is organized in order from simpler issues of data acquisition and aggregation, to more complicated questions of bias and latent true measurement.
 
@@ -167,16 +167,26 @@ Any data aggregation and cleaning approach will have to deal with the following 
   \end{itemize}
 \end{itemize}
 
-\hypertarget{what-data-are-available}{%
-\section{What data are available?}\label{what-data-are-available}}
+\hypertarget{unit-of-analysis-and-definition-of-measurements}{%
+\section{Unit of Analysis and Definition of Measurements}\label{unit-of-analysis-and-definition-of-measurements}}
 
-The Global Census of Covid-19 Counts (GC3) currently aggregates 27 databases. The databases vary drastically in size, scope, collection method, and purpose. On the small end are github repositories built around collecting a single country's published statistics, often available in an unstructured form on a government website in a native language. Others are official government statistics reported directly to and compiled by international organizations, like the World Health Organization (WHO) or the European Centre for Disease Prevention and Control. Some are news organizations that collect and compile official government statistics, like the New York Times and Reuters. Nonprofits like the Covidtracking Project compile records on specific issues like testing. Wikipedia provides an interface for a massive army of volunteers to enter in statistics into tabular formats that can later be scraped. The largest and most comprehensive scraping effort is the Corona Data Scraper from the Covid Atlas which only consumes sources directly from government and health organizations (excluding news and wikipeda). These all in turn are then ingested by larger aggregation projects. Johns Hopkins University Center for Systems Science and Engineering (JHU-CSSE) is the most widely used aggregator by downstream projects. Both Microsoft's Bing research Unit and Yahoo! have in turn recently made available their knowledge graph coverage of Covid-19 counts.
+The unit of analysis is the location-day. Locations can appear multiple times as aggregation in larger locations, e.g.~the United States, Texas, and Bexar County all appear in the data. The raw data are produced by different institutions at different levels of political aggregation, and so there's no guarantee that totals across lower levels of aggregation will equal totals at a higher level of spatial aggregation. The raw data record 3 measurements, CONFIRMED, DEATHS, and TESTED CONFIRMED should be the cumulative number of COVID-19 positive cases recorded in that location by and including that date. DEATHS which should be the cumulative number of deaths attributed to COVID-19. TESTED should be the cumulative number of test performed up to and including that date. When provided, we distinguish between TESTED\_PEOPLE and TESTED\_SAMPLES, where multiple tests may be necessary per person due to false positive and false negative rates. At this stage, these definitions should be taken as platonic constructs. It is how they are named and described in databases, news reporting, and government statistics, but that have wildly varying mapping between the reported number and the real world underlying theoretical measure.
+
+\hypertarget{fist-order-cleaning-steps}{%
+\section{Fist Order Cleaning Steps}\label{fist-order-cleaning-steps}}
+
+We take a conservative approach to data cleaning, rejecting noisy and contradictory observations as more representative of the data entry and institutional data generating processes than the underlying empirical data generating process that we actually care about. Our raw database begins with 917555 rows. Removing rows with missing date information and collapsing duplicate dates from the same database taking the max of each value reported, reduces that number to 824523 rows. We then further reject any row with: negative counts, death counts greater than confirmed, or a cumulative count not strictly greater than or equal to the day prior. Our theory of missingness is that very small or zero values are not meaningfully distinguishable from missing. We therefore set any 0 values to NA, and drop any rows with less than 2 confirmed cases. This reduces the count further to 684929 dataset-location-day observations.
+
+\hypertarget{sources-of-data}{%
+\section{Sources of Data}\label{sources-of-data}}
+
+The Global Census of Covid-19 Counts (GC3) currently aggregates 29 databases. The databases vary drastically in size, scope, collection method, and purpose. On the small end are small github repositories built around collecting a single country's published statistics, often available in an unstructured form on a government website in a native language. Others are official government statistics reported directly to and compiled by international organizations, like the World Health Organization (WHO) or the European Centre for Disease Prevention and Control. Some are news organizations that collect and compile official government statistics, like the New York Times and Reuters. Nonprofits like the Covidtracking Project compile records on specific issues like testing. Wikipedia provides an interface for a massive army of volunteers to enter in statistics into tabular formats that can later be scraped. The largest and most comprehensive scraping effort is the Corona Data Scraper from the Covid Atlas which only consumes sources directly from government and health organizations (excluding news and wikipeda). These all in turn are then ingested by larger aggregation projects. Johns Hopkins University Center for Systems Science and Engineering (JHU-CSSE) is the most widely used aggregator by downstream projects. Both Microsoft's Bing research Unit and Yahoo! have in turn recently made available their knowledge graph coverage of Covid-19 counts.
 
 Their names, links, and cleaned observation counts appear in the table below.
 
-\hypertarget{htmlwidget-53fed79daa8d98808eda}{}
+\hypertarget{htmlwidget-a022207f73edbca848d9}{}
 
-The unit of observation in our data is the location-day-outcome, e.g.~Texas-April 2-Deaths. The Upset plot below shows the number of unique location-day-outcome observations provided by each database along the vetical axis and the number of unique observations found only in that database an no other. Which databases will provide the most unique information is difficult to tell apriori. In general, the databases with the most observations and that rely on direct collection from raw sources rather than aggregation of others, tend to provide the most. For example, Corona Data Scraper provides both the most total and most unique observations.
+Which databases will provide the most unique information is difficult to tell apriori. The Upset plot below shows the number of unique location-day-variable observations provided by each database along the vertical axis and the number found only in that database an no other. In general, the databases with the most observations and that rely on direct collection from raw sources rather than aggregation of others, tend to provide the most unique information. For example, Corona Data Scraper provides both the most total and most unique observations.
 The most unique contributions come from the Corona Data Scraper Project, which might be anticipated by their overall size. The second most unique observations however comes from Wikipedia which is surprising because our treatment of it is currently ad hoc and it should already be ingested by other sources. It goes to show that no single source, or even no small combination of sources, is sufficient to provide full temporal and spatial coverage over even this relatively brief period of the Covid-19 pandemic.
 
 \begin{center}\includegraphics[width=1\linewidth]{HowToBeCarefulWithCovid19Counts_files/figure-latex/upset-1} \end{center}
@@ -191,7 +201,7 @@ Despite this major effort by data producers, collectors, and aggregators, there 
 
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{HowToBeCarefulWithCovid19Counts_files/figure-latex/nice-fig2-1} 
+{\centering \includegraphics{HowToBeCarefulWithCovid19Counts_files/figure-latex/nice-fig2-1} 
 
 }
 
@@ -205,7 +215,7 @@ Disparities in coverage across countries is most dramatic at the subnational lev
 
 \begin{figure}
 
-{\centering \includegraphics[width=1\linewidth]{HowToBeCarefulWithCovid19Counts_files/figure-latex/nice-fig3-1} 
+{\centering \includegraphics{HowToBeCarefulWithCovid19Counts_files/figure-latex/nice-fig3-1} 
 
 }
 
@@ -243,16 +253,16 @@ New York has been the most heavily hit by COVID-19 in the U.S. Two sources, Corn
 
 \begin{center}\includegraphics[width=1\linewidth]{HowToBeCarefulWithCovid19Counts_files/figure-latex/p_over_time_by_source_new_york_state1-1} \end{center}
 
-\begin{center}\includegraphics[width=1\linewidth]{HowToBeCarefulWithCovid19Counts_files/figure-latex/unnamed-chunk-28-1} \end{center}
+\begin{center}\includegraphics[width=1\linewidth]{HowToBeCarefulWithCovid19Counts_files/figure-latex/unnamed-chunk-27-1} \end{center}
 
 \hypertarget{where-and-how-do-they-disagree}{%
 \section{Where and How do they Disagree?}\label{where-and-how-do-they-disagree}}
 
-\begin{center}\includegraphics[width=1\linewidth]{HowToBeCarefulWithCovid19Counts_files/figure-latex/unnamed-chunk-30-1} \end{center}
+\begin{center}\includegraphics[width=1\linewidth]{HowToBeCarefulWithCovid19Counts_files/figure-latex/unnamed-chunk-29-1} \end{center}
+
+\hypertarget{htmlwidget-53fed79daa8d98808eda}{}
 
 \hypertarget{htmlwidget-3bd029832caec1d27062}{}
-
-\hypertarget{htmlwidget-49e42409f2e74eff5605}{}
 
 \hypertarget{tests}{%
 \chapter{Tests}\label{tests}}

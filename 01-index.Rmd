@@ -59,112 +59,34 @@ library(lubridate)
 
 ```
 
-
 ```{r}
 
-library(tsibble)
-
-lhs_long <- readRDS("/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long.Rds")
-dim(lhs_long) #779818
-
-####crap, some package I loaded breaks dplyr badly. The only one I can think of is UpSetR.
-
-lhs_long_clean <- lhs_long %>% as.data.frame() %>% ungroup() %>% 
-                  #filter(wikidata_id=="Q30" ) %>% #& dataset=="yahoo"
-                  mutate(dataset_gid_geonameid_wikidata_id= paste(dataset,gid,geonameid, wikidata_id, sep="_")  ) %>%
-                  mutate(gid_geonameid_wikidata_id= paste(gid,geonameid, wikidata_id, sep="_")  ) %>%
-
-                  dplyr::select(dataset_gid_geonameid_wikidata_id, gid_geonameid_wikidata_id, dataset, gid,geonameid, wikidata_id ,date_asdate, confirmed, deaths, tested_people, tested_samples) %>%
-  
-                  group_by(dataset_gid_geonameid_wikidata_id ,date_asdate) %>% #if the same source has multiple values on the same thing on the same day, or different values across unmerged obs, then take the max
-                    summarise_all(max, na.rm=T) %>% 
-                  ungroup() %>%
-  
-                  mutate_if(is.numeric, list(~na_if(., -Inf))) %>%
-                  mutate_if(is.numeric, list(~na_if(., Inf))) %>%
-  
-                  filter(!is.na(date_asdate)) %>%
-                  
-                  #First drop anything that's negative. Shouldn't be any negatives.
-                  filter(is.na(confirmed) | confirmed>=2) %>% #we're also going to require confirmed to be at least 2 or more. There's too many long tails of 1s
-                  filter(is.na(deaths) | deaths>=0) %>%
-                  filter(is.na(tested_people) | tested_people>=0) %>%
-                  filter(is.na(tested_samples) | tested_samples>=0) %>%
-                  
-                  #Also reject any where deaths are greater than confirmed
-                  filter(is.na(confirmed) | is.na(deaths) | confirmed>=deaths) %>%
-
-                  #Then set 0s to NA, we don't trust 0s
-                  mutate(confirmed=ifelse(confirmed==0, NA, confirmed)) %>%
-                  mutate(deaths=ifelse(deaths==0, NA, deaths)) %>%
-                  mutate(tested_people=ifelse(tested_people==0, NA, tested_people)) %>%
-                  mutate(tested_samples=ifelse(tested_samples==0, NA, tested_samples)) %>%
-
-                  #remove duplicate dates
-                  dplyr::group_by(  dataset_gid_geonameid_wikidata_id ) %>%  #it's not grouping correctly all of a sudden?
-                    dplyr::arrange(date_asdate) %>%
-                    filter(!duplicated(date_asdate) ) %>%
-                  ungroup() %>% 
-                                    
-                  #Then check first differences and drop anything that doesn't weakly increase monotonically
-                  dplyr::group_by(  dataset_gid_geonameid_wikidata_id ) %>%  #it's not grouping correctly all of a sudden?
-                    dplyr::arrange(date_asdate) %>%
-                    mutate(confirmed_cummax =    confirmed %>% replace_na(0) %>% cummax(),
-                           deaths_cummax    =    deaths %>% replace_na(0) %>% cummax(),
-                           tested_people_cummax= tested_people %>% replace_na(0) %>% cummax(), 
-                           tested_samples_cummax=tested_samples %>% replace_na(0) %>% cummax()
-                           ) %>%
-                  ungroup() %>%  
-  
-                  #About 4k of these observations show a decrease from one time step to the next which suggests either an original error or a joining error
-                  #We're going to straight drop those observations as a cleaning step
-                  #this isn't enough because if you have consecutive mistakes it'll show a positive fd even if it's not good enough
-                  filter( (is.na(confirmed) | confirmed>=confirmed_cummax) &  #never allow for a reversal
-                          (is.na(deaths) | deaths>=deaths_cummax) &        #never allow for a reversal
-                          (is.na(tested_people) | tested_people>=tested_people_cummax) &  #never allow for a reversal
-                          (is.na(tested_samples) | tested_samples>=tested_samples_cummax)  #never allow for a reversal
-                          ) %>%
-                    
-                  #we're going to go one step further and require either confirmed or tested to be strictly higher
-                  #In words, during an episode we don't believe reports mean "no new cases" just no new good reporting
-                  #metabiota is the worst offender here so restricting it to just that
-                  filter( !(
-                            dataset=="metabiota" & #is metabiota
-                            (!is.na(confirmed) &   #with a non missing confirmed
-                              confirmed<=confirmed_cummax ) #that is equal to or less than the cumulative max until then.
-                            ) #reject these
-                          ) #%>% #metabiota is really problematic 90% of what we're doing is trying to account for it
-                  
-                  
-                  #also reject any where confirmed doesn't vary at all at that location
-                  #I should do this but it's throwing weird warnings
-                  #group_by( gid_geonameid_wikidata_id) %>% #
-                  #  filter( confirmed %>% unique() %>% length() > 1 ) %>%
-                  #ungroup()
-
-dim(lhs_long_clean) #675,708 #675,696
-
-saveRDS(lhs_long_clean,
-        "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleand.Rds")
+lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleaned.Rds")
+dim(lhs_long_clean) #716545 #704314 #675,708 #187,305
+#lhs_long_clean$dataset
 
 ```
 
-
-```{r}
-
-lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleand.Rds")
-
-```
 
 # Executive Summary {#index}
 
-How should we interpret the endless stream of figures and maps of COVID-19 produced by health departments and organizations around the world? For better or worse, we primarily experience large complicated events through counts- How many are dead?; How many are sick?; How many tests did we perform? These are universal questions, immediately accessible to both the producers of information like doctors and scientists and consumers of information like policy makers and citizens. For anyone who regularly works with the answers to those questions, the actual data, you know that every one of those simple numbers in a cell needs a big asterisks pointing to a long footnote explaining all of the problems in developing and using that number. This book is that footnote for COVID-19 counts. It is intended as a practical guide for using COVID-19 data, and all of the regularities and subtle gotchas you can expect to find.
+How should we interpret the endless stream of figures of COVID-19 counts produced by health departments and organizations around the world? For better or worse, we primarily experience large complicated events through counts- How many are dead?; How many are sick?; How many tests were performed? These are universal questions, immediately accessible to both the producers of information like doctors and scientists and consumers of information like policy makers and citizens. However, for anyone who regularly works with the answers to those questions, actual data, they know that every one of those simple numbers in a cell needs a big asterisks pointing to a long footnote explaining all of the problems in developing and using that statistic. This book is that footnote for COVID-19 counts. It is intended as a practical guide for using COVID-19 data, and all of the regularities and subtle gotchas you can expect to find.
 
-This guide is built around a new resource developed at the Machine Learning for Social Science Lab called the Global Census of Covid-19 Counts (GC3). This is a single normalized and georeferenced aggregation of all of the other public aggregations of COVID-19 counts data available. We are currently aggregating `r lhs_long_clean$dataset %>% unique() %>% length()` databases, who are in turn scraping and aggregating over ten thousand sources like public statements, news reports, and individual health department websites. <!-- Using an existing system we have in development, the Named Entities for Social Science knowledge graph, we were able to convert all of the disparate natural language geographic names to a single uniform key index, which can be taken directly to other standard databases of demographic and medical information. --> Only by mosaicing all of these different resource together (`r lhs_long %>% nrow() %>% comma()` observations and growing), are we able to finally provide full temporal coverage over the entire COVID-19 pandemic, and full spatial coverage over all countries in the world and in most places states/provinces as well. We are now able to track counts of confirmed cases and deaths in `r lhs_long_clean %>% pull(gid_geonameid_wikidata_id) %>% unique() %>% length() %>% comma()` locations, and number of tests performed in `r lhs_long_clean %>% filter(!is.na(tested_people) | !is.na(tested_samples)) %>% pull(gid_geonameid_wikidata_id) %>% unique() %>% length() %>% comma()` locations.
+This guide is built around a new resource called the Global Census of Covid-19 Counts (GC3). It is a single normalized and georeferenced aggregation of all of the other public aggregations of COVID-19 counts data available. It currently aggregates `r lhs_long_clean$dataset %>% unique() %>% length()` databases, who are in turn scraping and aggregating over ten thousand sources like public statements, news reports, and individual health department websites. <!-- Using an existing system we have in development, the Named Entities for Social Science knowledge graph, we were able to convert all of the disparate natural language geographic names to a single uniform key index, which can be taken directly to other standard databases of demographic and medical information. --> Only by mosaicing all of these different sources together (`r lhs_long_clean %>% nrow() %>% comma()` observations and growing), are we able to finally provide full temporal coverage over the entire COVID-19 pandemic, and full spatial coverage over all countries in the world and in most places states/provinces as well. We are now able to track counts of confirmed cases and deaths in `r lhs_long_clean %>% pull(gid) %>% unique() %>% length() %>% comma()` locations, and number of tests performed in `r lhs_long_clean %>% filter(!is.na(tested_people) | !is.na(tested_samples)) %>% pull(gid) %>% unique() %>% length() %>% comma()` locations.
 
 This book is a deep dive into what problems and opportunities you can expect to find in these data. It is organized in order from simpler issues of data acquisition and aggregation, to more complicated questions of bias and latent true measurement.
 
 ## Key Takeaways (TLDR)
+
+
+## Key Caveats
+
+First and foremost, this is methodological text as opposed to an epidemiological text. I have neither training nor professional experience in epidemiology, medicine, or any of the germane natural sciences. I will repeatedly defer, and ask the reader to defer, to the expert consensus on any directly substantive empirical issue within those areas. What I am an expert in, if anything, is dirty cross-national time series data collected by complicated political institutions. I have learned the pitfalls of working with this kind of data, first as a political scientist working on datasets of sub-national and international violent events, and now as a computational social scientist working more broadly on very large knowledge graphs of billions of facts spanning politics, economics, and demography. This is a practical guide on data selection, cleaning, aggregation, and inference on panel event data. The application just so happens to be with events that are illness and mortality.
+
+Second, the advice and conclusions here are intended as and should be interpreted as arguments for inferential conservativism. I am largely arguing how difficult it is to know what's really going on, given the difficulty of measurement and number of competing plausible alternatives. These confidence intervals are the upper bound of certainty.
+
+Third, the uncertainties documented here should not be misconstrued as ignorance or indifference. There is an anti-intellectual movement in the U.S. and elsewhere attempting to provide political alternatives to scientific expertise during the COVID-19 pandemic. Methodological critiques are often unfortunately appropriated by such movements in an attempt to show that experts are wrong or expertise itself does not exist. Let me unequivocally pre-empt those ideas. There is no COVID-19 "good news" to be found here. The national lockdowns were not an overreaction and re-opening too quickly will likely lead to a costly resurgence. The difficulty in measuring and modeling this pandamic is a reason for MORE caution NOT less. And for all of the problems with COVID-19 research right now, there are literally tens of thousands of dedicated and ernest professoinals producing high quality work that is getting us closer to ground truth each and every day. The same cannot be said for the ideologues standing in opposition, whose work has been almost uniformly intellectually dishonest, incurious, and sophist. This text is a testiment to how science is hard, not unecessary, and is a call for more scientific rigor, not less.
+
 
 
 ```{r nice-fig, eval=F, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
@@ -185,5 +107,3 @@ knitr::kable(
   booktabs = TRUE
 )
 ```
-
-You can write citations, too. For example, we are using the **bookdown** package [@R-bookdown] in this sample book, which was built on top of R Markdown and **knitr** [@xie2015].

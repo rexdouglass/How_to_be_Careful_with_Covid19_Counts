@@ -1,0 +1,245 @@
+
+```{r,warning=FALSE,message=FALSE,error=FALSE, results='hide' , include=FALSE}
+knitr::opts_chunk$set( out.width='100%', fig.asp=NULL, fig.align='center', echo=F, warning=FALSE,message=FALSE,error=FALSE, results='hide', cache=T  ) 
+
+#Notes to self
+#It's not like R notebook you have the knit every time you want to update html, you can't just save
+#You don't have to rerun the code or rebuild the whole book though.
+
+```
+
+```{r}
+#Library Loads
+library(scales) 
+library(tidyverse)
+# stable version on CRAN
+#install.packages("bookdown")
+# or development version on GitHub
+# devtools::install_github('rstudio/bookdown')
+#libraries
+library(lubridate)
+library(tidyverse)
+
+#devtools::install_github("ropensci/USAboundaries")
+#devtools::install_github("ropensci/USAboundariesData")
+library(USAboundaries) ; #install.packages('USAboundaries')
+data(state_codes)
+
+library(tidyverse)
+library(scales)
+library(gghighlight)
+library(lubridate)
+library(R0)  # consider moving all library commands to top -- this one was in a loop below
+
+library(WikidataR)
+library(countrycode)
+
+library(usmap) ; # install.packages('usmap')
+data(statepop)
+#devtools::install_github("ropensci/USAboundaries")
+#devtools::install_github("ropensci/USAboundariesData")
+library(USAboundaries) ; #install.packages('USAboundaries')
+data(state_codes)
+
+library(tidyverse)
+library(sf)
+
+library(jsonlite)
+
+#This is too slow it's downloading each
+library(GADMTools)
+library(strucchange) ; #install.packages('strucchange')
+library(tsibble)
+
+library(patchwork)
+```
+
+
+```{r}
+#Data load
+lhs_long_clean_labeled <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_clean_labeled.Rds")
+dim(lhs_long_clean_labeled) #716545 #704314 #675,708 #187,305
+
+```
+
+
+# COVID-19 Inference
+
+In this chapter I will introduce parameters we wish to infer about COVID-19 spread and a modeling approach that can recover them from the observable introduced in the last chapter. I will add components to the model one piece at a time so that their function and impact on inference are clear. 
+
+## Confirmed Cases
+
+```{r}
+
+gid_cfr <- lhs_long_clean_labeled %>% 
+           arrange(-confirmed) %>% 
+           group_by(gid, admin_level, name_prefered) %>% #this doesn't work because there are some with more deaths than confirmed
+            filter(row_number()==1) %>%
+            #summarize(confirmed=max(confirmed,na.rm=T), deaths=max(deaths,na.rm=T)) %>% 
+           ungroup() %>% 
+           dplyr::select(gid, admin_level, name_prefered, confirmed, deaths) %>%
+           mutate_if(is.numeric, list(~na_if(abs(.), Inf))) %>% distinct() %>%
+           na.omit() %>% 
+           arrange(-confirmed) %>%
+           mutate(cfr=deaths/confirmed) %>%
+           filter(cfr<.25) #once you remove these 17 outliers evrything is flagged as beta distributed
+
+library(fitdistrplus)
+gid_cfr %>% filter(admin_level==0) %>% pull(confirmed) %>% quantile(prob=seq(0,1,.01))
+gid_cfr %>% filter(admin_level==0) %>% pull(confirmed) %>% quantile(prob=seq(0,1,.1))
+gid_cfr %>% filter(admin_level==0) %>% pull(confirmed) %>% hist()
+gid_cfr %>% filter(admin_level==0) %>% pull(confirmed) %>% fitdistrplus::descdist(boot = 1000)
+
+gid_cfr %>% filter(admin_level==1) %>% pull(confirmed) %>% fitdistrplus::descdist(boot = 1000)
+
+gid_cfr %>% filter(admin_level==1) %>% pull(confirmed) %>% quantile(prob=seq(0,1,.1))
+gid_cfr %>% filter(admin_level==2) %>% pull(confirmed) %>% fitdistrplus::descdist(boot = 1000)
+gid_cfr %>% filter(admin_level==2) %>% pull(confirmed) %>% hist()
+# CHN.13.1_1            2 China, Hubei, Enshi Tujia and Miao     68134   4512 0.0662 #there are a lot of dupes here
+
+
+```
+
+
+## Confirmed Case Fatality Rate (CCFR)
+
+One parameter we can estimate directly from the data is the ratio of reported COVID-19 fatalities to the reported COVID-19 cases in an area. This should not be confused with the Case Fatality Rate (CFR) or the Infection Fatality Rate (IFR) which I discuss later. The CCFR is bounded between 0 and 1.
+
+$Confirmed Case Fataility Rate = \frac{ConfirmedCovid19Fatailities}{ConfirmedCovid19Cases}$
+
+```{r}
+
+gid_cfr <- lhs_long_clean_labeled %>% 
+           arrange(-confirmed) %>% 
+           group_by(gid, admin_level, name_prefered) %>% #this doesn't work because there are some with more deaths than confirmed
+            filter(row_number()==1) %>%
+            #summarize(confirmed=max(confirmed,na.rm=T), deaths=max(deaths,na.rm=T)) %>% 
+           ungroup() %>% 
+           dplyr::select(gid, admin_level, name_prefered, confirmed, deaths) %>%
+           mutate_if(is.numeric, list(~na_if(abs(.), Inf))) %>% distinct() %>%
+           na.omit() %>% 
+           arrange(-confirmed) %>%
+           mutate(cfr=deaths/confirmed) %>%
+           filter(cfr<.25) #once you remove these 17 outliers evrything is flagged as beta distributed
+
+#gid_cfr %>% filter(cfr>.25) #only 17 examples with cfr greater that .25 and it's all low level stuff
+
+summary(gid_cfr$cfr) #99% are less than .25 going to exclude anything over .25
+gid_cfr %>% filter(admin_level==0) %>% pull(cfr) %>% quantile(prob=seq(0,1,.01))
+gid_cfr %>% filter(admin_level==1) %>% pull(cfr) %>% quantile(prob=seq(0,1,.01))
+gid_cfr %>% filter(admin_level==2) %>% pull(cfr) %>% quantile(prob=seq(0,1,.01))
+
+library(fitdistrplus)
+gid_cfr %>% filter(admin_level==0) %>% pull(cfr) %>% fitdistrplus::descdist(boot = 1000) #beta distributed
+gid_cfr %>% filter(admin_level==1) %>% pull(cfr) %>% fitdistrplus::descdist(boot = 1000) #beta distributed
+gid_cfr %>% filter(admin_level==2) %>% pull(cfr) %>% fitdistrplus::descdist(boot = 1000) #beta distributed
+
+fg <- gid_cfr %>% filter(admin_level==0) %>% pull(cfr) %>% fitdist("beta")
+par(mfrow = c(2, 2))
+plot.legend <- c("Beta")
+denscomp(list(fg), legendtext = plot.legend)
+qqcomp(list(fg), legendtext = plot.legend)
+cdfcomp(list(fg), legendtext = plot.legend)
+ppcomp(list(fg), legendtext = plot.legend)
+
+fg <- gid_cfr %>% filter(admin_level==1) %>% pull(cfr) %>% fitdist("beta")
+par(mfrow = c(2, 2))
+plot.legend <- c("Beta")
+denscomp(list(fg), legendtext = plot.legend)
+qqcomp(list(fg), legendtext = plot.legend)
+cdfcomp(list(fg), legendtext = plot.legend)
+ppcomp(list(fg), legendtext = plot.legend)
+
+fg <- gid_cfr %>% filter(admin_level==2) %>% pull(cfr) %>% fitdist("beta")
+par(mfrow = c(2, 2))
+plot.legend <- c("Beta")
+denscomp(list(fg), legendtext = plot.legend)
+qqcomp(list(fg), legendtext = plot.legend)
+cdfcomp(list(fg), legendtext = plot.legend)
+ppcomp(list(fg), legendtext = plot.legend)
+
+
+global_cfr <- gid_cfr %>% filter(admin_level==0) %>% summarise_if(is.numeric, sum, na.rm=T) %>% mutate(cfr=round(deaths/confirmed,2))
+
+```
+
+$CFR=`r global_cfr$cfr %>% round(2)` = \frac{`r global_cfr$global_cfr %>% comma()`}{`r global_cfr$global_cfr %>% comma()`}$
+
+
+```{r, eval=F}
+gid_cfr %>% mutate(admin_level=as.factor(admin_level)) %>% ggplot(aes(x=cfr, color=admin_level)) + geom_density() + theme_bw()
+
+gid_cfr %>% pull(cfr) %>% summary()
+
+gid_cfr %>% mutate(admin_level=as.factor(admin_level)) %>% ggplot(aes(x=cfr, color=admin_level)) + geom_boxplot() + theme_bw()
+
+
+```
+
+```{r, fig.height=3, fig.width=8}
+library(ggridges)
+temp <- gid_cfr %>% 
+  mutate(admin_level=as.factor(admin_level)) %>%
+  mutate(admin_level=recode(admin_level, `0` = "Country", `1`="Province", `2`="District")) %>%
+  mutate(cfr=cfr*100) 
+  
+temp %>%
+  ggplot(aes(x = cfr, y = admin_level)) + #
+  geom_density_ridges(scale = 1.6, quantile_lines = TRUE, fill="lightgrey", alpha=.6, aes( vline_color = ..quantile.., vline_type="dotted")
+                      #point_shape="|", point_size=.01, size=0.25, jittered_points=T
+                      ) + 
+  scale_y_discrete(expand = c(0.1, 0)) +     # will generally have to set the `expand` option
+  scale_x_continuous(expand = c(0, 0), labels = function(x) paste0(x, "%")) +   # for both axes to remove unneeded padding #https://stackoverflow.com/questions/27433798/how-can-i-change-the-y-axis-figures-into-percentages-in-a-barplot
+  coord_cartesian(clip = "off") + # to avoid clipping of the very top of the top ridgeline
+  theme_ridges() + coord_cartesian(xlim=c(0,25)) +
+  scale_discrete_manual("vline_color",
+                      values = c("blue", "red", "blue", "black"), 
+                      breaks = c(1, 2),
+                      labels = c("1st & 3rd quartile", "median"),
+                      name = NULL) +
+  theme(legend.position = c(0.6, 0.8)) +
+  ylab("Aggregation") + xlab("Confirmed Case Fatality Rate") +
+  labs(
+    title="Distribution of Confirmed Case Fataility Rate (CCFR)",
+    subtitle="Excluding Outliers"
+  ) +
+  geom_text(data=temp %>% group_by(admin_level) %>% 
+            summarise(cfr= round(median(cfr, na.rm=T), 2)),
+          aes(label=paste0(round(cfr,1),"%")), 
+          position=position_nudge(y=.8, x=.7), colour="red", size=3.5)  +
+  geom_text(data=temp %>% group_by(admin_level) %>% 
+            summarise(cfr= round(quantile(cfr,probs=.25, na.rm=T), 2)),
+          aes(label=paste0(round(cfr,1),"%")), 
+          position=position_nudge(y=.8, x=.7), colour="blue", size=3.5) +
+  geom_text(data=temp %>% group_by(admin_level) %>% 
+            summarise(cfr= round(quantile(cfr,probs=.75, na.rm=T), 2)),
+          aes(label=paste0(round(cfr,1),"%")), 
+          position=position_nudge(y=.8, x=.7), colour="blue", size=3.5) 
+
+```
+
+
+
+
+
+## Tests
+
+## Tested People versus Tested Samples
+
+## Interpolate Within Observed
+
+## Interplate Prior to Observed
+
+## Interpolate Subnationally
+
+## Explaining Variation in Testing
+
+
+
+South Korea
+
+Vietnam
+https://www.reuters.com/article/us-health-coronavirus-vietnam-fight-insi-idUSKBN22B34H
+
+
+

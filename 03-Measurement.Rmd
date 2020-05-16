@@ -64,19 +64,46 @@ library(DT)
 
 
 ```{r}
+
+lhs_long <- readRDS("/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long.Rds")
+dim(lhs_long) #1068650 #917,555 #779818
+
 #Data Loads
 #lhs_long <- readRDS("/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long.Rds")
 #Data loads
-lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleand.Rds")
-dim(lhs_long_clean) #675,708 #187,305
+lhs_long_all <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_all.Rds")
+dim(lhs_long_all) #859202 #675,708 #187,305
+
+lhs_long_clean <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_cleaned.Rds")
+dim(lhs_long_clean) #716545 #704314 #675,708 #187,305
+#lhs_long_clean$dataset
+
+lhs_long_clean_labeled <- readRDS( "/media/skynet2/905884f0-7546-4273-9061-12a790830beb/rwd_github_private/NESScovid19/data_temp/lhs_long_clean_labeled.Rds")
+dim(lhs_long_clean_labeled) #716545 #704314 #675,708 #187,305
 #lhs_long_clean$dataset
 
 ```
 
 
-# Global COVID-19 Count Data
+# COVID-19 Measurement
 
-## Takeaways
+Government and health institutions around the world are racing to produce measures of the COVID-19 pandemic and response. This chapter catalogs and compiles a wide range of measures and evaluates their potential for helping us to infer what we cannot directly measure about the pandemic.
+
+
+## Executive Summary
+
+* COVID Survailance
+Number of Tests Performed
+Number of Confirmed Cases
+Number of Fatalities due to COVID-19
+
+* Influenza Surveillance
+Influenza Tests Performed
+Percent of Influenza Tests Positive
+
+* Mortality
+Influenza and 
+
 
 Any data aggregation and cleaning approach will have to deal with the following issues
 
@@ -96,10 +123,20 @@ Any data aggregation and cleaning approach will have to deal with the following 
 * Bias
     + Correlation between missingness and measurement
     + Attenuation bias
-    
-## What data are available?
 
-The Global Census of Covid-19 Counts (GC3) currently aggregates `r lhs_long_clean$dataset %>% unique() %>% length()` databases. The databases vary drastically in size, scope, collection method, and purpose. On the small end are github repositories built around collecting a single country's published statistics, often available in an unstructured form on a government website in a native language. Others are official government statistics reported directly to and compiled by international organizations, like the World Health Organization (WHO) or the European Centre for Disease Prevention and Control. Some are news organizations that collect and compile official government statistics, like the New York Times and Reuters. Nonprofits like the Covidtracking Project compile records on specific issues like testing. Wikipedia provides an interface for a massive army of volunteers to enter in statistics into tabular formats that can later be scraped.  The largest and most comprehensive scraping effort is the Corona Data Scraper from the Covid Atlas which only consumes sources directly from government and health organizations (excluding news and wikipeda). These all in turn are then ingested by larger aggregation projects. Johns Hopkins University Center for Systems Science and Engineering (JHU-CSSE) is the most widely used aggregator by downstream projects. Both Microsoft's Bing research Unit and Yahoo! have in turn recently made available their knowledge graph coverage of Covid-19 counts.
+### Unit of Analysis and Definition of Measurements
+
+The unit of analysis is the location-day. Locations can appear multiple times as aggregation in larger locations, e.g. the United States, Texas, and Bexar County all appear in the data. The raw data are produced by different institutions at different levels of political aggregation, and so there's no guarantee that totals across lower levels of aggregation will equal totals at a higher level of spatial aggregation. The raw data record 3 measurements, CONFIRMED, DEATHS, and TESTED CONFIRMED should be the cumulative number of COVID-19 positive cases recorded in that location by and including that date. DEATHS which should be the cumulative number of deaths attributed to COVID-19. TESTED should be the cumulative number of test performed up to and including that date. When provided, we distinguish between TESTED_PEOPLE and TESTED_SAMPLES, where multiple tests may be necessary per person due to false positive and false negative rates. At this stage, these definitions should be taken as platonic constructs. It is how they are named and described in databases, news reporting, and government statistics, but that have wildly varying mapping between the reported number and the real world underlying theoretical measure.
+
+### Fist Order Cleaning Steps
+
+We take a conservative approach to data cleaning, rejecting noisy and contradictory observations as more representative of the data entry and institutional data generating processes than the underlying empirical data generating process that we actually care about. Our raw database begins with `r lhs_long %>% nrow()` rows. Removing rows with missing date information and collapsing duplicate dates from the same database taking the max of each value reported, reduces that number to `r lhs_long_all %>% nrow()` rows. We then further reject any row with: negative counts, death counts greater than confirmed, or a cumulative count not strictly greater than or equal to the day prior. Our theory of missingness is that very small or zero values are not meaningfully distinguishable from missing. We therefore set any 0 values to NA, and drop any rows with less than 2 confirmed cases. This reduces the count further to `r lhs_long_clean %>% nrow()` dataset-location-day observations.
+
+## COVID-19 Survailance
+
+### Sources of Data
+
+The Global Census of Covid-19 Counts (GC3) currently aggregates `r lhs_long_clean$dataset %>% unique() %>% length()` databases. The databases vary drastically in size, scope, collection method, and purpose. On the small end are small github repositories built around collecting a single country's published statistics, often available in an unstructured form on a government website in a native language. Others are official government statistics reported directly to and compiled by international organizations, like the World Health Organization (WHO) or the European Centre for Disease Prevention and Control. Some are news organizations that collect and compile official government statistics, like the New York Times and Reuters. Nonprofits like the Covidtracking Project compile records on specific issues like testing. Wikipedia provides an interface for a massive army of volunteers to enter in statistics into tabular formats that can later be scraped.  The largest and most comprehensive scraping effort is the Corona Data Scraper from the Covid Atlas which only consumes sources directly from government and health organizations (excluding news and wikipeda). These all in turn are then ingested by larger aggregation projects. Johns Hopkins University Center for Systems Science and Engineering (JHU-CSSE) is the most widely used aggregator by downstream projects. Both Microsoft's Bing research Unit and Yahoo! have in turn recently made available their knowledge graph coverage of Covid-19 counts.
 
 Their names, links, and cleaned observation counts appear in the table below.
 
@@ -134,11 +171,8 @@ lhs_long_clean %>% dplyr::count(dataset) %>% arrange(-n) %>% DT::datatable(optio
 #There's a miscode of New York City and New York state that creates an issue
 lhs_long_clean_confirmed_wide <-
                               lhs_long_clean %>%
-                              filter(!is.na(wikidata_id)) %>% #the NA_NA_NA obs were screwing with us
                               dplyr::mutate(tested= coalesce(tested_people, tested_samples) ) %>%
-                              dplyr::select(dataset, gid_geonameid_wikidata_id, date_asdate, confirmed, deaths, tested) %>%
-                              filter(!is.na(gid_geonameid_wikidata_id) & !is.na(date_asdate)) %>%
-                              group_by(dataset, gid_geonameid_wikidata_id, date_asdate) %>%
+                              group_by(dataset, gid, date_asdate) %>%
                                 dplyr::summarise(
                                                 confirmed= suppressWarnings(max(confirmed, na.rm=T)),
                                                  deaths   = suppressWarnings( max(deaths, na.rm=T)),
@@ -156,46 +190,69 @@ temp <- lhs_long_clean_confirmed_wide  %>% mutate_if(is.numeric, replace_na, 0) 
 
 ```
 
-The unit of observation in our data is the location-day-outcome, e.g. Texas-April 2-Deaths. The Upset plot below shows the number of unique location-day-outcome observations provided by each database along the vetical axis and the number of unique observations found only in that database an no other. Which databases will provide the most unique information is difficult to tell apriori. In general, the databases with the most observations and that rely on direct collection from raw sources rather than aggregation of others, tend to provide the most. For example, Corona Data Scraper provides both the most total and most unique observations.
+Which databases will provide the most unique information is difficult to tell apriori. The Upset plot below shows the number of unique location-day-variable observations provided by each database along the vertical axis and the number found only in that database an no other. In general, the databases with the most observations and that rely on direct collection from raw sources rather than aggregation of others, tend to provide the most unique information. For example, Corona Data Scraper provides both the most total and most unique observations.
 The most unique contributions come from the Corona Data Scraper Project, which might be anticipated by their overall size. The second most unique observations however comes from Wikipedia which is surprising because our treatment of it is currently ad hoc and it should already be ingested by other sources. It goes to show that no single source, or even no small combination of sources, is sufficient to provide full temporal and spatial coverage over even this relatively brief period of the Covid-19 pandemic.
 
 ```{r upset}
 library(UpSetR) #install.packages('UpSetR')
-upset(temp %>% as.data.frame(), nsets = 23, nintersects = 22, mb.ratio = c(0.4, 0.6),
+upset(temp %>% as.data.frame(), nsets = 27, nintersects = 22, mb.ratio = c(0.4, 0.6),
       order.by = c("freq", "degree"), decreasing = c(T,FALSE))
 detach(package:UpSetR, unload=TRUE) #I currently suspect this of breaking dplyr in really subtle quite ways that are noooot good.
 ```
 
 
-## What is their geographic coverage?
+#### What is their geographic coverage?
 
 ```{r}
 
 
-lhs_long_place_sources <- lhs_long  %>% dplyr::select(gid,   geonameid, wikidata_id, dataset) %>% 
-                           group_by(gid,  geonameid, wikidata_id) %>% dplyr::count(dataset) %>%
-                           group_by(gid,  geonameid, wikidata_id) %>%
+lhs_long_place_sources <- lhs_long_clean_labeled  %>% dplyr::select(gid, dataset) %>% 
+                           group_by(gid) %>% dplyr::count(dataset) %>%
+                           group_by(gid) %>%
                            dplyr::summarise(datasets_n=n()) 
 
-lhs_long_place_sources_testing <- lhs_long  %>%
-                                  dplyr::select(gid,  geonameid, wikidata_id, date_asdate, confirmed, tested_people, tested_samples) %>%
-                                  group_by(gid,  geonameid, wikidata_id, date_asdate) %>% 
-                                  mutate_if(is.numeric, max, na.rm=T) %>% #this takes a max across all datasets for that day
-                                  filter(!duplicated(date_asdate)) %>%
+lhs_long_place_sources_testing <- lhs_long_clean_labeled  %>%
+                                  dplyr::select(admin_level, gid, date_asdate, confirmed, tested_people, tested_samples) %>%
+                                  group_by(gid, date_asdate) %>% 
+                                    mutate_if(is.numeric, max, na.rm=T) %>% #this takes a max across all datasets for that day
+                                    filter(!duplicated(date_asdate)) %>%
                                   ungroup() %>%
                                   mutate_if(is.numeric, list(~na_if(., -Inf))) %>%
                                   mutate_if(is.numeric, list(~na_if(., Inf))) %>%
-                                  mutate(percent_of_days_without_testing=!is.na(date_asdate) & (is.na(tested_people) & is.na(tested_samples)  )) %>%
-                                  
-                                  group_by(gid,  geonameid, wikidata_id) %>% 
-                                  dplyr::summarise(
-                                            percent_of_days_without_testing=sum(percent_of_days_without_testing, na.rm=T)/n()
-                                            ) %>%
-                                  mutate(percent_of_days_with_testing= 1-percent_of_days_without_testing) 
+                                  mutate(tested= coalesce(tested_people,tested_samples)) %>%
+                                  mutate(confirmed_notna= !is.na(confirmed)) %>%
+                                  mutate(tested_notna= !is.na(tested))
+
+
+
+lhs_long_place_sources_testing_location <- lhs_long_place_sources_testing %>% 
+                                           group_by(admin_level, gid) %>%
+                                           summarize(confirmed_notna_sum=sum(confirmed_notna), 
+                                                      tested_notna_sum=sum(tested_notna) 
+                                                      ) %>%
+                                           mutate(percent_of_days_with_testing=tested_notna_sum/confirmed_notna_sum) %>%
+                                           mutate_if(is.numeric, list(~na_if(., -Inf))) %>%
+                                           mutate_if(is.numeric, list(~na_if(., Inf))) 
+
+admin_all_unique <- readRDS(paste0(here::here(),"/../NESScovid19/data_in/admin_all_unique.Rds"))
+
+universe <- admin_all_unique %>% dplyr::select(gid0,name0_prefered, gid1,name1_prefered, gid2,name2_prefered, gid, wikidata_id, geonameid, name_prefered, admin_level) %>% distinct()
+
+universe_with_data <- universe %>%
+                      left_join( lhs_long_clean_labeled %>% dplyr::select(gid, confirmed, deaths, tested_people, tested_samples) %>% group_by(gid) %>% summarise_all(sum, na.rm=T) ) %>%
+                      mutate(tested=tested_people+tested_samples)
+universe_with_data_0 <- universe_with_data %>% filter(admin_level <= 1) %>% group_by(gid0,name0_prefered) %>% summarise(n=n(), tested_avail = sum(tested>0, na.rm=T) )
+
+
+
+dim(lhs_long_place_sources_testing_location) #5,212
+lhs_long_place_sources_testing_location %>% filter(tested_notna_sum>0) %>% dim() #1,258
+
+
 
 ```
 
-### Country Level Data Availability
+#### Country Level Data Availability
 
 
 ```{r}
@@ -212,33 +269,50 @@ gadm36_levels_0 = st_read("/media/skynet2/905884f0-7546-4273-9061-12a790830beb/r
 
 ```{r}
 
-p_datasets_by_country <- gadm36_levels_0 %>% 
+p_datasets_by_country <- gadm36_levels_0 %>% filter(GID_0!="ATA") %>%
       left_join(lhs_long_place_sources %>% dplyr::select(gid=gid, datasets_n) %>%  left_join( gadm36_levels_0 %>% as.data.frame() %>% dplyr::select(gid=GID_0, NAME_0)  %>% distinct()  )
                 ) %>%
       #replace_na(list(datasets_n = 0)) %>% 
       ggplot() + geom_sf(aes(fill = datasets_n)) +
       scale_fill_gradient(name= "# Databases", low="red", high="green") +
-      theme_bw() + ggtitle("Number of Databases with Coverage of each Country")
+      theme_bw() + ggtitle("Number of Databases with Coverage of each Country") + theme(
+                        legend.position = c(.05, .65),
+                        legend.justification = c("left", "top"),
+                        legend.box.just = "left",
+                        legend.margin = margin(0, 0, 0, 0)
+                        )
 
+temp <- gadm36_levels_0 %>% filter(GID_0!="ATA") %>%
+  left_join(
+    lhs_long_place_sources_testing_location %>% 
+      dplyr::select(gid=gid, confirmed_notna_sum, tested_notna_sum, percent_of_days_with_testing) %>%  
+        rowwise() %>%
+        mutate(percent_of_days_with_testing_clean = round( min(1,percent_of_days_with_testing) * 100 ) ) %>%
+        ungroup() %>%
+        left_join( gadm36_levels_0 %>% as.data.frame() %>% dplyr::select(gid=GID_0, NAME_0)  %>% distinct()  )
+  )
 
-p0_testing <- gadm36_levels_0 %>% 
-  left_join(lhs_long_place_sources_testing %>% dplyr::select(gid=gid, percent_of_days_with_testing) %>%  left_join( gadm36_levels_0 %>% as.data.frame() %>% dplyr::select(gid=GID_0, NAME_0)  %>% distinct()  )
-  ) %>%
+p0_testing <- temp %>%
   #replace_na(list(datasets_n = 0)) %>% 
-  ggplot() + geom_sf(aes(fill = percent_of_days_with_testing)) +
+  ggplot() + geom_sf(aes(fill = percent_of_days_with_testing_clean)) +
   scale_fill_gradient(name= "Percent", low="red", high="green") +
-  theme_bw() + ggtitle("Percent of Days with Testing Counts")
+  theme_bw() + ggtitle("Percent of Days with Testing Counts") + theme(
+                        legend.position = c(.05, .65),
+                        legend.justification = c("left", "top"),
+                        legend.box.just = "left",
+                        legend.margin = margin(0, 0, 0, 0)
+                        )
 
 ```
 Despite this major effort by data producers, collectors, and aggregators, there is still major geographic variation in availability across countries. Most notably in availability of counts on number of tests performed, particularly in Central Africa.
 
 
-```{r, nice-fig2, fig.cap='Data coverage by country.'}
+```{r, nice-fig2, fig.cap='Data coverage by country.', fig.width=15 , out.width=NULL}
 p_datasets_by_country / p0_testing
 ```
 
 
-### State/Province Level Data Availability
+#### State/Province Level Data Availability
 
 Disparities in coverage across countries is most dramatic at the subnational level.
 
@@ -248,27 +322,52 @@ gadm36_levels_1 = st_read("/media/skynet2/905884f0-7546-4273-9061-12a790830beb/r
 ```
 
 ```{r}
-p_datasets_by_state <- gadm36_levels_1 %>% 
-                        left_join(lhs_long_place_sources %>% dplyr::select(gid=gid, datasets_n) %>%  left_join( gadm36_levels_1 %>% as.data.frame() %>% dplyr::select(gid=GID_1, NAME_1) %>% distinct()  )
-                        ) %>%
+
+p_datasets_by_state <- gadm36_levels_1 %>% filter(GID_0!="ATA") %>%
+                        left_join(lhs_long_place_sources %>% dplyr::select(gid=gid, datasets_n) %>%  left_join( gadm36_levels_1 %>% as.data.frame() %>% dplyr::select(gid=GID_1, NAME_1) %>% distinct()  ) ) %>%
                         #replace_na(list(datasets_n = 0)) %>% 
                         ggplot() + geom_sf(aes(fill = datasets_n)) +
                         scale_fill_gradient(name= "# Databases", low="red", high="green") +
-                        theme_bw()  + ggtitle("Number of Databases with Coverage of each State/Province")
-```
+                        theme_bw()  + ggtitle("Number of Databases with Coverage of each State/Province") + theme(
+                        legend.position = c(.05, .65),
+                        legend.justification = c("left", "top"),
+                        legend.box.just = "left",
+                        legend.margin = margin(0, 0, 0, 0)
+                        )
 
+temp <- gadm36_levels_1 %>% filter(GID_0!="ATA") %>%
+  left_join(
+    lhs_long_place_sources_testing_location %>% 
+      dplyr::select(gid=gid, confirmed_notna_sum, tested_notna_sum, percent_of_days_with_testing) %>%  
+        rowwise() %>%
+        mutate(percent_of_days_with_testing_clean = round( min(1,percent_of_days_with_testing) * 100 ) ) %>%
+        ungroup() %>%
+        left_join( gadm36_levels_1 %>% as.data.frame() %>% dplyr::select(gid=GID_1, NAME_1)  %>% distinct()  )
+  )
 
-```{r}
-p1_testing <- gadm36_levels_1 %>% 
-  left_join(lhs_long_place_sources_testing %>% dplyr::select(gid=gid, percent_of_days_with_testing) %>%  left_join( gadm36_levels_1 %>% as.data.frame() %>% dplyr::select(gid=GID_1, NAME_1) %>% distinct()  )
-  ) %>%
-  #replace_na(list(datasets_n = 0)) %>% 
-  ggplot() + geom_sf(aes(fill = percent_of_days_with_testing)) +
+temp_country <- temp %>%
+                as_tibble() %>%
+                mutate(percent_of_days_with_testing_clean_dichot = percent_of_days_with_testing_clean>0) %>% 
+                group_by(GID_0) %>% summarise(n=n(), percent_of_days_with_testing_clean_dichot=sum(percent_of_days_with_testing_clean_dichot))
+
+dim(temp) #3651
+temp %>% as_tibble() %>% filter(percent_of_days_with_testing_clean>0) %>% dim() #there's only 189 
+
+p1_testing <- temp %>%  
+  ggplot() + geom_sf(aes(fill = percent_of_days_with_testing_clean)) +
   scale_fill_gradient(name= "Percent", low="red", high="green") +
-  theme_bw()  + ggtitle("Percent of Days with Testing Counts")
+  theme_bw()  + ggtitle("Percent of Days with Testing Counts") + theme(
+                        legend.position = c(.05, .65),
+                        legend.justification = c("left", "top"),
+                        legend.box.just = "left",
+                        legend.margin = margin(0, 0, 0, 0)
+                        )
+
 ```
 
-```{r, nice-fig3, fig.cap='Data coverage by State/Province'}
+
+
+```{r, nice-fig3, fig.width=10, fig.cap='Data coverage by State/Province', fig.width=15, out.width=NULL}
 p_datasets_by_state/p1_testing
 ```
 
@@ -300,21 +399,21 @@ p2
 
 
 
-## What is their temporal coverage?
+### What is their temporal coverage?
 
-### Coverage Across Three Countries
+#### Coverage Across Three Countries
 
 Figures x,y,z illustrate the problem of data coverage for 3 countries, China, Italy, and the U.S.
 
 ```{r }
 #China
 #"Q148"
-test <- lhs_long_clean %>%
+test <- lhs_long_clean_labeled %>%
   mutate(confirmed_log = log(confirmed)) %>% 
   mutate(deaths_log = log(deaths)) %>% 
   mutate(tested_log = log(coalesce(tested_people, tested_samples) )) %>% 
   
-  filter(!is.na(confirmed_log) ) %>%
+  filter(!is.na(confirmed_log) | !is.na(deaths_log) | !is.na(tested_log) ) %>%
   filter(wikidata_id=="Q148") %>% 
   arrange(date_asdate) #>%
 
@@ -342,12 +441,12 @@ Italy's coverage across datasets is fairly good and uniform, though there are br
 ```{r}
 #Italy
 #"Q38"
-test <- lhs_long_clean %>%
+test <- lhs_long_clean_labeled %>%
   mutate(confirmed_log = log(confirmed)) %>% 
   mutate(deaths_log = log(deaths)) %>% 
   mutate(tested_log = log(coalesce(tested_people, tested_samples) )) %>% 
   
-  filter(!is.na(confirmed_log) ) %>%
+  filter(!is.na(confirmed_log) | !is.na(deaths_log) | !is.na(tested_log) ) %>%
   filter(wikidata_id=="Q38") %>% 
   arrange(date_asdate) #%>%
 #mutate( confirmed_log_y_hat_percent_change = breakpoints(formula=confirmed_log_y_hat_percent_change ~ 1, data=. ) %>% fitted.values() )
@@ -374,12 +473,12 @@ The U.S. has a great deal of coverage, but also a great deal of disagreement in 
 ```{r}
 #U.S.
 #"Q30"
-test <- lhs_long_clean %>%
+test <- lhs_long_clean_labeled %>%
   mutate(confirmed_log = log(confirmed)) %>% 
   mutate(deaths_log = log(deaths)) %>% 
   mutate(tested_log = log(coalesce(tested_people, tested_samples) )) %>% 
   
-  filter(!is.na(confirmed_log) ) %>%
+  filter(!is.na(confirmed_log) | !is.na(deaths_log) | !is.na(tested_log) ) %>%
   filter(wikidata_id=="Q30") %>% 
   arrange(date_asdate)
 
@@ -406,12 +505,12 @@ New York has been the most heavily hit by COVID-19 in the U.S. Two sources, Corn
 ```{r}
 #New York State
 #"Q30"
-test <- lhs_long_clean %>%
+test <- lhs_long_clean_labeled %>%
   mutate(confirmed_log = log(confirmed)) %>% 
   mutate(deaths_log = log(deaths)) %>% 
   mutate(tested_log = log(coalesce(tested_people, tested_samples) )) %>% 
   
-  filter(!is.na(confirmed_log) ) %>%
+  filter(!is.na(confirmed_log) | !is.na(deaths_log) | !is.na(tested_log) ) %>%
   filter(wikidata_id=="Q1384") %>% 
   arrange(date_asdate) 
 
@@ -435,11 +534,11 @@ p_over_time_by_source_new_york_state
 
 ```{r}
 #Bronx County (Q855974)
-test <- lhs_long_clean %>%
+test <- lhs_long_clean_labeled %>%
         mutate(confirmed_log = log(confirmed)) %>% 
         mutate(deaths_log = log(deaths)) %>% 
         mutate(tested_log = log(coalesce(tested_people, tested_samples) )) %>% 
-        filter(!is.na(confirmed_log) ) %>%
+        filter(!is.na(confirmed_log) | !is.na(deaths_log) | !is.na(tested_log) ) %>%
         filter(wikidata_id=="Q855974") %>% 
         arrange(date_asdate) 
 
@@ -453,13 +552,14 @@ p_over_time_by_source_Bronx <- test %>%
                             ylab("Cumulative Count (log)") + xlab("Date") +
                             ggtitle("Bronx County (Q855974) Counts")
 
+#Kings County (Q11980692)
 #Brooklyn (Q18419)
-test <- lhs_long_clean %>%
+test <- lhs_long_clean_labeled %>%
         mutate(confirmed_log = log(confirmed)) %>% 
         mutate(deaths_log = log(deaths)) %>% 
         mutate(tested_log = log(coalesce(tested_people, tested_samples) )) %>% 
-        filter(!is.na(confirmed_log) ) %>%
-        filter(wikidata_id=="Q18419") %>% 
+  filter(!is.na(confirmed_log) | !is.na(deaths_log) | !is.na(tested_log) ) %>%
+        filter(wikidata_id=="Q11980692") %>% 
         arrange(date_asdate) 
 
 p_over_time_by_source_Brooklyn <- test %>%
@@ -470,15 +570,15 @@ p_over_time_by_source_Brooklyn <- test %>%
                             theme_bw() +
                             facet_wrap(~dataset   ) +
                             ylab("Cumulative Count (log)") + xlab("Date") +
-                            ggtitle("Brooklyn County (Q18419) Counts")
+                            ggtitle("Kings County (Brooklyn) (Q11980692) Counts")
 
 
 #Queens County, New York Q5142559
-test <- lhs_long_clean %>%
+test <- lhs_long_clean_labeled %>%
         mutate(confirmed_log = log(confirmed)) %>% 
         mutate(deaths_log = log(deaths)) %>% 
         mutate(tested_log = log(coalesce(tested_people, tested_samples) )) %>% 
-        filter(!is.na(confirmed_log) ) %>%
+  filter(!is.na(confirmed_log) | !is.na(deaths_log) | !is.na(tested_log) ) %>%
         filter(wikidata_id=="Q5142559") %>% 
         arrange(date_asdate) 
 
@@ -493,11 +593,11 @@ p_over_time_by_source_Queens <- test %>%
                             ggtitle("Queens County (Q18419) Counts")
 
 #Manhattan is New York County Q500416
-test <- lhs_long_clean %>%
+test <- lhs_long_clean_labeled %>%
         mutate(confirmed_log = log(confirmed)) %>% 
         mutate(deaths_log = log(deaths)) %>% 
         mutate(tested_log = log(coalesce(tested_people, tested_samples) )) %>% 
-        filter(!is.na(confirmed_log) ) %>%
+  filter(!is.na(confirmed_log) | !is.na(deaths_log) | !is.na(tested_log) ) %>%
         filter(wikidata_id=="Q500416") %>% 
         arrange(date_asdate) 
 
@@ -512,11 +612,11 @@ p_over_time_by_source_Manhattan <- test %>%
                             ggtitle("Manhattan (Q500416) Counts")
 
 #Staten Island is richmond county Q11997784
-test <- lhs_long_clean %>%
+test <- lhs_long_clean_labeled %>%
         mutate(confirmed_log = log(confirmed)) %>% 
         mutate(deaths_log = log(deaths)) %>% 
         mutate(tested_log = log(coalesce(tested_people, tested_samples) )) %>% 
-        filter(!is.na(confirmed_log) ) %>%
+  filter(!is.na(confirmed_log) | !is.na(deaths_log) | !is.na(tested_log) ) %>%
         filter(wikidata_id=="Q11997784") %>% 
         arrange(date_asdate) 
 
@@ -535,36 +635,36 @@ p_over_time_by_source_Staten_Island <- test %>%
 ```{r}
 
 p_over_time_by_source_Bronx +
-#p_over_time_by_source_Brooklyn + #I need to fix brooklyn
+p_over_time_by_source_Brooklyn + #I need to fix brooklyn
 p_over_time_by_source_Queens + 
 p_over_time_by_source_Manhattan + 
 p_over_time_by_source_Staten_Island
 
 ```
 
-## Where and How do they Disagree?
+### Where and How do they Disagree?
 
-```{r}
-temp <- lhs_long_clean %>% 
+```{r, eval=F}
+temp <- lhs_long_clean_labeled %>% 
                               filter(!is.na(wikidata_id)) %>% #the NA_NA_NA obs were screwing with us
                               dplyr::select(dataset, gid_geonameid_wikidata_id, date_asdate, confirmed) %>%
-                              filter(!is.na(gid_geonameid_wikidata_id) & !is.na(date_asdate)) %>%
+                              #filter(!is.na(gid_geonameid_wikidata_id) & !is.na(date_asdate)) %>%
                               filter(!is.na(confirmed) & confirmed>0 )
 
-lhs_long_clean_pairwise <- temp %>% left_join(temp, by=c('gid_geonameid_wikidata_id', 'date_asdate'))
-dim(lhs_long_clean_pairwise) #3,304,496
+lhs_long_clean_labeled_pairwise <- temp %>% left_join(temp, by=c('gid_geonameid_wikidata_id', 'date_asdate'))
+dim(lhs_long_clean_labeled_pairwise) #3,304,496
 
-lhs_long_clean_pairwise <- lhs_long_clean_pairwise %>% 
+lhs_long_clean_labeled_pairwise <- lhs_long_clean_labeled_pairwise %>% 
                            filter(dataset.x!=dataset.y) %>%
                            mutate(resid_perc= abs((confirmed.x/confirmed.y)-1)  )
 
-dim(lhs_long_clean_pairwise) #2,673,952
-lhs_long_clean_pairwise$resid_perc %>% summary() #About within 2% on average but exact usually
+dim(lhs_long_clean_labeled_pairwise) #2,673,952
+lhs_long_clean_labeled_pairwise$resid_perc %>% summary() #About within 2% on average but exact usually
 
 ```
 
-```{r}
-lhs_long_clean_pairwise_date <- lhs_long_clean_pairwise %>%
+```{r, eval=F}
+lhs_long_clean_labeled_pairwise_date <- lhs_long_clean_labeled_pairwise %>%
                                 group_by(date_asdate) %>%
                                 dplyr::summarise(resid_perc_mean=mean(resid_perc, na.rm=T),
                                           resid_perc_50=quantile(resid_perc, probs=.50,na.rm=T),
@@ -574,7 +674,7 @@ lhs_long_clean_pairwise_date <- lhs_long_clean_pairwise %>%
 
 #Ok this is percent difference over time, shows disagreement in the middle
 #more helpful if we put this in terms of t since first confirmed or 100 confirmed
-lhs_long_clean_pairwise_date %>% 
+lhs_long_clean_labeled_pairwise_date %>% 
                     ggplot(aes(date_asdate)) + 
                     geom_line(aes(y=resid_perc_50)) + 
                     geom_line(aes(y=resid_perc_90)) + 
@@ -582,9 +682,9 @@ lhs_long_clean_pairwise_date %>%
                     theme_bw() + ylab("Percent Difference Across Sources")
 ```
 
-```{r}
+```{r, eval=F}
 #Percent difference by datasource
-lhs_long_clean_pairwise_source <- lhs_long_clean_pairwise %>%
+lhs_long_clean_labeled_pairwise_source <- lhs_long_clean_labeled_pairwise %>%
                                   group_by(dataset.x) %>%
                                   dplyr::summarise(resid_perc_mean=mean(resid_perc, na.rm=T) %>% round(2),
                                             resid_perc_50=quantile(resid_perc, probs=.50,na.rm=T) %>% round(2),
@@ -595,13 +695,13 @@ lhs_long_clean_pairwise_source <- lhs_long_clean_pairwise %>%
 
 ```
 
-```{r, results="show"}
-lhs_long_clean_pairwise_source %>% arrange(-resid_perc_mean) %>% DT::datatable(options = list(pageLength = 20, autoWidth = TRUE))
+```{r, results="show", eval=F}
+lhs_long_clean_labeled_pairwise_source %>% arrange(-resid_perc_mean) %>% DT::datatable(options = list(pageLength = 20, autoWidth = TRUE))
 ```
 
-```{r}
+```{r, eval=F}
 #By location
-lhs_long_clean_pairwise_location <- lhs_long_clean_pairwise %>%
+lhs_long_clean_labeled_pairwise_location <- lhs_long_clean_labeled_pairwise %>%
                                     group_by(gid_geonameid_wikidata_id) %>%
                                     dplyr::summarise(resid_perc_mean=mean(resid_perc, na.rm=T) %>% round(2),
                                               resid_perc_50=quantile(resid_perc, probs=.50,na.rm=T) %>% round(2),
@@ -611,11 +711,61 @@ lhs_long_clean_pairwise_location <- lhs_long_clean_pairwise %>%
                                               )
 ```
                                             
-```{r, results="show"}
-lhs_long_clean_pairwise_location %>% arrange(-resid_perc_mean) %>% DT::datatable(options = list(pageLength = 20, autoWidth = TRUE))
+```{r, results="show", eval=F}
+lhs_long_clean_labeled_pairwise_location %>% arrange(-resid_perc_mean) %>% DT::datatable(options = list(pageLength = 20, autoWidth = TRUE))
 ```
 
 
 
-    
+## Influenza Survailance
+
+This is the main page for links on weekly mortality data
+https://www.cdc.gov/nchs/nvss/vsrr/covid_weekly/
+"The National Center for Health Statistics (NCHS) uses incoming data from death certificates to produce provisional COVID-19 death counts. These include deaths occurring within the 50 states and the District of Columbia. COVID-19 deaths are identified using a new ICD–10 code. When COVID-19 is reported as a cause of death – or when it is listed as a “probable” or “presumed” cause — the death is coded as U07.1. This can include cases with or without laboratory confirmation."
+
+
+"Provisional COVID-19 Death Counts by Week Ending Date and State"
+https://data.cdc.gov/NCHS/Provisional-COVID-19-Death-Counts-by-Week-Ending-D/r8kw-7aab
+
+
+There is technically raw data but the csv is aweful
+Gives you age stratified number tested and the percent positive
+https://www.cdc.gov/coronavirus/2019-ncov/covid-data/covidview/05082020/csv/public-health-lab.csv
+https://data.cdc.gov/api/views/r8kw-7aab/rows.csv?accessType=DOWNLOAD
+
+For now I might have to download this all by hand
+
+CDC COVID-NET Weekly Report: COVID-19-Associated
+Hospitalizations Application Quick Reference Guide
+https://gis.cdc.gov/grasp/COVIDNet/Documents/316429-A_FS_COVID-NET%20Helpquick%20Reference%20Guide_FINAL.pdf
+"Data gathered are used to estimate agespecific hospitalization rates on a weekly basis and describe characteristics of persons hospitalized with COVID-19. Laboratory confirmation is dependent on clinicianordered SARS-CoV-2 testing. Therefore, the rates provided are likely to be underestimated as COVID-19-associated hospitalizations can be missed due to test availability and provider or facility testing practices."
+
+
+"Mortality Surveillance
+The National Center for Health Statistics (NCHS) collects death certificate data from vital statistics offices for all deaths occurring in the United States. Based on death certificate data available on May 7, 2020, 10.6% of all deaths occurring during the week ending May 2, 2020 (week 18) were due to pneumonia, influenza or COVID-19 (PIC). This is the third week of a stable or declining percentage of deaths due to PIC;"
+
+https://catalog.data.gov/dataset/deaths-from-pneumonia-and-influenza-pi-and-all-deaths-by-state-and-region-national-center-
+
+
+https://www.cdc.gov/nchs/nvss/covid-19.htm
+Updated daily, Monday–Friday
+
+Provisional Death Counts for Coronavirus Disease (COVID-19)
+
+Tabulated data on provisional death counts for COVID-19, by week, jurisdiction, and age in the U.S.
+
+Updated weekly
+
+Weekly State-Specific Data Updates by Select Demographic and Geographic Characteristics
+
+Tabulated data on provisional COVID-19 deaths by race and Hispanic origin
+
+Updated weekly
+
+Excess Deaths Associated with COVID-19
+
+Visualizations of estimates of excess deaths related to the COVID-19 pandemic
+
+
+## Motaility Survailance
 

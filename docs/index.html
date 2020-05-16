@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data</title>
-  <meta name="description" content="How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data" />
+  <title>How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists</title>
+  <meta name="description" content="How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
   <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data" />
+  <meta property="og:title" content="How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
   <meta property="og:type" content="book" />
   
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data" />
+  <meta name="twitter:title" content="How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
   
   
   
@@ -24,7 +24,7 @@
 <meta name="author" content="Rex W. Douglass" />
 
 
-<meta name="date" content="2020-05-02" />
+<meta name="date" content="2020-05-15" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -32,7 +32,7 @@
   
   
 
-<link rel="next" href="global-covid-19-count-data.html"/>
+<link rel="next" href="empirical-background.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -50,6 +50,14 @@
 
 
 
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.12/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
 
 
 
@@ -72,35 +80,37 @@
 <li class="divider"></li>
 <li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Executive Summary</a><ul>
 <li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#key-takeaways-tldr"><i class="fa fa-check"></i><b>1.1</b> Key Takeaways (TLDR)</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#key-caveats"><i class="fa fa-check"></i><b>1.2</b> Key Caveats</a></li>
 </ul></li>
-<li class="chapter" data-level="2" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html"><i class="fa fa-check"></i><b>2</b> Global COVID-19 Count Data</a><ul>
-<li class="chapter" data-level="2.1" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#takeaways"><i class="fa fa-check"></i><b>2.1</b> Takeaways</a></li>
-<li class="chapter" data-level="2.2" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#what-data-are-available"><i class="fa fa-check"></i><b>2.2</b> What data are available?</a></li>
-<li class="chapter" data-level="2.3" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#what-is-their-geographic-coverage"><i class="fa fa-check"></i><b>2.3</b> What is their geographic coverage?</a><ul>
-<li class="chapter" data-level="2.3.1" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#country-level-data-availability"><i class="fa fa-check"></i><b>2.3.1</b> Country Level Data Availability</a></li>
-<li class="chapter" data-level="2.3.2" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#stateprovince-level-data-availability"><i class="fa fa-check"></i><b>2.3.2</b> State/Province Level Data Availability</a></li>
-<li class="chapter" data-level="2.3.3" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#county-district-level-data-availability"><i class="fa fa-check"></i><b>2.3.3</b> County District Level Data Availability</a></li>
+<li class="chapter" data-level="2" data-path="empirical-background.html"><a href="empirical-background.html"><i class="fa fa-check"></i><b>2</b> Empirical Background</a></li>
+<li class="chapter" data-level="3" data-path="day-zero.html"><a href="day-zero.html"><i class="fa fa-check"></i><b>3</b> Day Zero</a></li>
+<li class="chapter" data-level="4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html"><i class="fa fa-check"></i><b>4</b> COVID-19 Measurement</a><ul>
+<li class="chapter" data-level="4.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#executive-summary"><i class="fa fa-check"></i><b>4.1</b> Executive Summary</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#unit-of-analysis-and-definition-of-measurements"><i class="fa fa-check"></i><b>4.1.1</b> Unit of Analysis and Definition of Measurements</a></li>
+<li class="chapter" data-level="4.1.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#fist-order-cleaning-steps"><i class="fa fa-check"></i><b>4.1.2</b> Fist Order Cleaning Steps</a></li>
 </ul></li>
-<li class="chapter" data-level="2.4" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#what-is-their-temporal-coverage"><i class="fa fa-check"></i><b>2.4</b> What is their temporal coverage?</a><ul>
-<li class="chapter" data-level="2.4.1" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#coverage-across-three-countries"><i class="fa fa-check"></i><b>2.4.1</b> Coverage Across Three Countries</a></li>
+<li class="chapter" data-level="4.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#covid-19-survailance"><i class="fa fa-check"></i><b>4.2</b> COVID-19 Survailance</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#sources-of-data"><i class="fa fa-check"></i><b>4.2.1</b> Sources of Data</a></li>
+<li class="chapter" data-level="4.2.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#county-district-level-data-availability"><i class="fa fa-check"></i><b>4.2.2</b> County District Level Data Availability</a></li>
+<li class="chapter" data-level="4.2.3" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#what-is-their-temporal-coverage"><i class="fa fa-check"></i><b>4.2.3</b> What is their temporal coverage?</a></li>
+<li class="chapter" data-level="4.2.4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#where-and-how-do-they-disagree"><i class="fa fa-check"></i><b>4.2.4</b> Where and How do they Disagree?</a></li>
 </ul></li>
-<li class="chapter" data-level="2.5" data-path="global-covid-19-count-data.html"><a href="global-covid-19-count-data.html#where-and-how-do-they-disagree"><i class="fa fa-check"></i><b>2.5</b> Where and How do they Disagree?</a></li>
+<li class="chapter" data-level="4.3" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#influenza-survailance"><i class="fa fa-check"></i><b>4.3</b> Influenza Survailance</a></li>
+<li class="chapter" data-level="4.4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#motaility-survailance"><i class="fa fa-check"></i><b>4.4</b> Motaility Survailance</a></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="tests.html"><a href="tests.html"><i class="fa fa-check"></i><b>3</b> Tests</a><ul>
-<li class="chapter" data-level="3.1" data-path="tests.html"><a href="tests.html#tested-people-versus-tested-samples"><i class="fa fa-check"></i><b>3.1</b> Tested People versus Tested Samples</a></li>
-<li class="chapter" data-level="3.2" data-path="tests.html"><a href="tests.html#interpolate-within-observed"><i class="fa fa-check"></i><b>3.2</b> Interpolate Within Observed</a></li>
-<li class="chapter" data-level="3.3" data-path="tests.html"><a href="tests.html#interplate-prior-to-observed"><i class="fa fa-check"></i><b>3.3</b> Interplate Prior to Observed</a></li>
-<li class="chapter" data-level="3.4" data-path="tests.html"><a href="tests.html#interpolate-subnationally"><i class="fa fa-check"></i><b>3.4</b> Interpolate Subnationally</a></li>
-<li class="chapter" data-level="3.5" data-path="tests.html"><a href="tests.html#explaining-variation-in-testing"><i class="fa fa-check"></i><b>3.5</b> Explaining Variation in Testing</a></li>
+<li class="chapter" data-level="5" data-path="covid-19-inference.html"><a href="covid-19-inference.html"><i class="fa fa-check"></i><b>5</b> COVID-19 Inference</a><ul>
+<li class="chapter" data-level="5.1" data-path="covid-19-inference.html"><a href="covid-19-inference.html#confirmed-cases"><i class="fa fa-check"></i><b>5.1</b> Confirmed Cases</a></li>
+<li class="chapter" data-level="5.2" data-path="covid-19-inference.html"><a href="covid-19-inference.html#confirmed-case-fatality-rate-ccfr"><i class="fa fa-check"></i><b>5.2</b> Confirmed Case Fatality Rate (CCFR)</a></li>
+<li class="chapter" data-level="5.3" data-path="covid-19-inference.html"><a href="covid-19-inference.html#tests"><i class="fa fa-check"></i><b>5.3</b> Tests</a></li>
+<li class="chapter" data-level="5.4" data-path="covid-19-inference.html"><a href="covid-19-inference.html#tested-people-versus-tested-samples"><i class="fa fa-check"></i><b>5.4</b> Tested People versus Tested Samples</a></li>
+<li class="chapter" data-level="5.5" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interpolate-within-observed"><i class="fa fa-check"></i><b>5.5</b> Interpolate Within Observed</a></li>
+<li class="chapter" data-level="5.6" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interplate-prior-to-observed"><i class="fa fa-check"></i><b>5.6</b> Interplate Prior to Observed</a></li>
+<li class="chapter" data-level="5.7" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interpolate-subnationally"><i class="fa fa-check"></i><b>5.7</b> Interpolate Subnationally</a></li>
+<li class="chapter" data-level="5.8" data-path="covid-19-inference.html"><a href="covid-19-inference.html#explaining-variation-in-testing"><i class="fa fa-check"></i><b>5.8</b> Explaining Variation in Testing</a></li>
 </ul></li>
-<li class="chapter" data-level="4" data-path="common-measures-of-interest.html"><a href="common-measures-of-interest.html"><i class="fa fa-check"></i><b>4</b> Common Measures of Interest</a><ul>
-<li class="chapter" data-level="4.1" data-path="common-measures-of-interest.html"><a href="common-measures-of-interest.html#r0-and-r"><i class="fa fa-check"></i><b>4.1</b> R0 and R</a></li>
-<li class="chapter" data-level="4.2" data-path="common-measures-of-interest.html"><a href="common-measures-of-interest.html#case-fatality-rate-cfr"><i class="fa fa-check"></i><b>4.2</b> Case Fatality Rate (CFR)</a></li>
-<li class="chapter" data-level="4.3" data-path="common-measures-of-interest.html"><a href="common-measures-of-interest.html#percent-positive"><i class="fa fa-check"></i><b>4.3</b> Percent Positive</a></li>
-</ul></li>
-<li class="chapter" data-level="5" data-path="deaths.html"><a href="deaths.html"><i class="fa fa-check"></i><b>5</b> Deaths</a></li>
-<li class="chapter" data-level="6" data-path="actual-infections.html"><a href="actual-infections.html"><i class="fa fa-check"></i><b>6</b> Actual Infections</a></li>
-<li class="chapter" data-level="7" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>7</b> Conclusion</a></li>
+<li class="chapter" data-level="6" data-path="covid-19-causal-inference.html"><a href="covid-19-causal-inference.html"><i class="fa fa-check"></i><b>6</b> COVID-19 Causal-Inference</a></li>
+<li class="chapter" data-level="7" data-path="covid-19-prediction.html"><a href="covid-19-prediction.html"><i class="fa fa-check"></i><b>7</b> COVID-19 Prediction</a></li>
+<li class="chapter" data-level="8" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>8</b> Conclusion</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 </ul>
 
@@ -111,7 +121,7 @@
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists</a>
           </h1>
         </div>
 
@@ -120,28 +130,24 @@
 
             <section class="normal" id="section-">
 <div id="header">
-<h1 class="title">How to be Careful with Covid-19 Counts: A Practical Guide to Working with Pandemic Panel Data</h1>
+<h1 class="title">How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists</h1>
 <p class="author"><em>Rex W. Douglass</em></p>
-<p class="date"><em>2020-05-02</em></p>
+<p class="date"><em>2020-05-15</em></p>
 </div>
 <div id="index" class="section level1">
 <h1><span class="header-section-number">Chapter 1</span> Executive Summary</h1>
-<p>How should we interpret the endless stream of figures and maps of COVID-19 produced by health departments and organizations around the world? For better or worse, we primarily experience large complicated events through counts- How many are dead?; How many are sick?; How many tests did we perform? These are universal questions, immediately accessible to both the producers of information like doctors and scientists and consumers of information like policy makers and citizens. For anyone who regularly works with the answers to those questions, the actual data, you know that every one of those simple numbers in a cell needs a big asterisks pointing to a long footnote explaining all of the problems in developing and using that number. This book is that footnote for COVID-19 counts. It is intended as a practical guide for using COVID-19 data, and all of the regularities and subtle gotchas you can expect to find.</p>
-<p>This guide is built around a new resource developed at the Machine Learning for Social Science Lab called the Global Census of Covid-19 Counts (GC3). This is a single normalized and georeferenced aggregation of all of the other public aggregations of COVID-19 counts data available. We are currently aggregating 27 databases, who are in turn scraping and aggregating over ten thousand sources like public statements, news reports, and individual health department websites. <!-- Using an existing system we have in development, the Named Entities for Social Science knowledge graph, we were able to convert all of the disparate natural language geographic names to a single uniform key index, which can be taken directly to other standard databases of demographic and medical information. --> Only by mosaicing all of these different resource together (917,149 observations and growing), are we able to finally provide full temporal coverage over the entire COVID-19 pandemic, and full spatial coverage over all countries in the world and in most places states/provinces as well. We are now able to track counts of confirmed cases and deaths in 5,168 locations, and number of tests performed in 1,233 locations.</p>
+<p>How should we interpret the endless stream of figures of COVID-19 counts produced by health departments and organizations around the world? For better or worse, we primarily experience large complicated events through counts- How many are dead?; How many are sick?; How many tests were performed? These are universal questions, immediately accessible to both the producers of information like doctors and scientists and consumers of information like policy makers and citizens. However, for anyone who regularly works with the answers to those questions, actual data, they know that every one of those simple numbers in a cell needs a big asterisks pointing to a long footnote explaining all of the problems in developing and using that statistic. This book is that footnote for COVID-19 counts. It is intended as a practical guide for using COVID-19 data, and all of the regularities and subtle gotchas you can expect to find.</p>
+<p>This guide is built around a new resource called the Global Census of Covid-19 Counts (GC3). It is a single normalized and georeferenced aggregation of all of the other public aggregations of COVID-19 counts data available. It currently aggregates 31 databases, who are in turn scraping and aggregating over ten thousand sources like public statements, news reports, and individual health department websites. <!-- Using an existing system we have in development, the Named Entities for Social Science knowledge graph, we were able to convert all of the disparate natural language geographic names to a single uniform key index, which can be taken directly to other standard databases of demographic and medical information. --> Only by mosaicing all of these different sources together (978,650 observations and growing), are we able to finally provide full temporal coverage over the entire COVID-19 pandemic, and full spatial coverage over all countries in the world and in most places states/provinces as well. We are now able to track counts of confirmed cases and deaths in 4,923 locations, and number of tests performed in 1,373 locations.</p>
 <p>This book is a deep dive into what problems and opportunities you can expect to find in these data. It is organized in order from simpler issues of data acquisition and aggregation, to more complicated questions of bias and latent true measurement.</p>
 <div id="key-takeaways-tldr" class="section level2">
 <h2><span class="header-section-number">1.1</span> Key Takeaways (TLDR)</h2>
-<p>You can write citations, too. For example, we are using the <strong>bookdown</strong> package <span class="citation">(Xie <a href="#ref-R-bookdown" role="doc-biblioref">2020</a>)</span> in this sample book, which was built on top of R Markdown and <strong>knitr</strong> <span class="citation">(Xie <a href="#ref-xie2015" role="doc-biblioref">2015</a>)</span>.</p>
+</div>
+<div id="key-caveats" class="section level2">
+<h2><span class="header-section-number">1.2</span> Key Caveats</h2>
+<p>First and foremost, this is methodological text as opposed to an epidemiological text. I have neither training nor professional experience in epidemiology, medicine, or any of the germane natural sciences. I will repeatedly defer, and ask the reader to defer, to the expert consensus on any directly substantive empirical issue within those areas. What I am an expert in, if anything, is dirty cross-national time series data collected by complicated political institutions. I have learned the pitfalls of working with this kind of data, first as a political scientist working on datasets of sub-national and international violent events, and now as a computational social scientist working more broadly on very large knowledge graphs of billions of facts spanning politics, economics, and demography. This is a practical guide on data selection, cleaning, aggregation, and inference on panel event data. The application just so happens to be with events that are illness and mortality.</p>
+<p>Second, the advice and conclusions here are intended as and should be interpreted as arguments for inferential conservativism. I am largely arguing how difficult it is to know what’s really going on, given the difficulty of measurement and number of competing plausible alternatives. These confidence intervals are the upper bound of certainty.</p>
+<p>Third, the uncertainties documented here should not be misconstrued as ignorance or indifference. There is an anti-intellectual movement in the U.S. and elsewhere attempting to provide political alternatives to scientific expertise during the COVID-19 pandemic. Methodological critiques are often unfortunately appropriated by such movements in an attempt to show that experts are wrong or expertise itself does not exist. Let me unequivocally pre-empt those ideas. There is no COVID-19 “good news” to be found here. The national lockdowns were not an overreaction and re-opening too quickly will likely lead to a costly resurgence. The difficulty in measuring and modeling this pandamic is a reason for MORE caution NOT less. And for all of the problems with COVID-19 research right now, there are literally tens of thousands of dedicated and ernest professoinals producing high quality work that is getting us closer to ground truth each and every day. The same cannot be said for the ideologues standing in opposition, whose work has been almost uniformly intellectually dishonest, incurious, and sophist. This text is a testiment to how science is hard, not unecessary, and is a call for more scientific rigor, not less.</p>
 
-</div>
-</div>
-<h3>References</h3>
-<div id="refs" class="references">
-<div id="ref-xie2015">
-<p>Xie, Yihui. 2015. <em>Dynamic Documents with R and Knitr</em>. 2nd ed. Boca Raton, Florida: Chapman; Hall/CRC. <a href="http://yihui.name/knitr/">http://yihui.name/knitr/</a>.</p>
-</div>
-<div id="ref-R-bookdown">
-<p>Xie, Yihui. 2020. <em>Bookdown: Authoring Books and Technical Documents with R Markdown</em>. <a href="https://CRAN.R-project.org/package=bookdown">https://CRAN.R-project.org/package=bookdown</a>.</p>
 </div>
 </div>
             </section>
@@ -150,7 +156,7 @@
         </div>
       </div>
 
-<a href="global-covid-19-count-data.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="empirical-background.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -200,6 +206,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

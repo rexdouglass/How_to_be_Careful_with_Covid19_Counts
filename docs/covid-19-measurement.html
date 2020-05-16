@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 COVID-19 Measurement | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists</title>
+  <meta name="description" content="Chapter 4 COVID-19 Measurement | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 COVID-19 Measurement | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 COVID-19 Measurement | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
+  
+  
+  
+
+<meta name="author" content="Rex W. Douglass" />
+
+
+<meta name="date" content="2020-05-15" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="day-zero.html"/>
+<link rel="next" href="covid-19-inference.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.12/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">How to be Careful with Covid-19 Counts</a></li>
+<li><a href="https://www.rexdouglass.com" target="_blank">Rex W. Douglass</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Executive Summary</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#key-takeaways-tldr"><i class="fa fa-check"></i><b>1.1</b> Key Takeaways (TLDR)</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#key-caveats"><i class="fa fa-check"></i><b>1.2</b> Key Caveats</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="empirical-background.html"><a href="empirical-background.html"><i class="fa fa-check"></i><b>2</b> Empirical Background</a></li>
+<li class="chapter" data-level="3" data-path="day-zero.html"><a href="day-zero.html"><i class="fa fa-check"></i><b>3</b> Day Zero</a></li>
+<li class="chapter" data-level="4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html"><i class="fa fa-check"></i><b>4</b> COVID-19 Measurement</a><ul>
+<li class="chapter" data-level="4.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#executive-summary"><i class="fa fa-check"></i><b>4.1</b> Executive Summary</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#unit-of-analysis-and-definition-of-measurements"><i class="fa fa-check"></i><b>4.1.1</b> Unit of Analysis and Definition of Measurements</a></li>
+<li class="chapter" data-level="4.1.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#fist-order-cleaning-steps"><i class="fa fa-check"></i><b>4.1.2</b> Fist Order Cleaning Steps</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#covid-19-survailance"><i class="fa fa-check"></i><b>4.2</b> COVID-19 Survailance</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#sources-of-data"><i class="fa fa-check"></i><b>4.2.1</b> Sources of Data</a></li>
+<li class="chapter" data-level="4.2.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#county-district-level-data-availability"><i class="fa fa-check"></i><b>4.2.2</b> County District Level Data Availability</a></li>
+<li class="chapter" data-level="4.2.3" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#what-is-their-temporal-coverage"><i class="fa fa-check"></i><b>4.2.3</b> What is their temporal coverage?</a></li>
+<li class="chapter" data-level="4.2.4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#where-and-how-do-they-disagree"><i class="fa fa-check"></i><b>4.2.4</b> Where and How do they Disagree?</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#influenza-survailance"><i class="fa fa-check"></i><b>4.3</b> Influenza Survailance</a></li>
+<li class="chapter" data-level="4.4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#motaility-survailance"><i class="fa fa-check"></i><b>4.4</b> Motaility Survailance</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="covid-19-inference.html"><a href="covid-19-inference.html"><i class="fa fa-check"></i><b>5</b> COVID-19 Inference</a><ul>
+<li class="chapter" data-level="5.1" data-path="covid-19-inference.html"><a href="covid-19-inference.html#confirmed-cases"><i class="fa fa-check"></i><b>5.1</b> Confirmed Cases</a></li>
+<li class="chapter" data-level="5.2" data-path="covid-19-inference.html"><a href="covid-19-inference.html#confirmed-case-fatality-rate-ccfr"><i class="fa fa-check"></i><b>5.2</b> Confirmed Case Fatality Rate (CCFR)</a></li>
+<li class="chapter" data-level="5.3" data-path="covid-19-inference.html"><a href="covid-19-inference.html#tests"><i class="fa fa-check"></i><b>5.3</b> Tests</a></li>
+<li class="chapter" data-level="5.4" data-path="covid-19-inference.html"><a href="covid-19-inference.html#tested-people-versus-tested-samples"><i class="fa fa-check"></i><b>5.4</b> Tested People versus Tested Samples</a></li>
+<li class="chapter" data-level="5.5" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interpolate-within-observed"><i class="fa fa-check"></i><b>5.5</b> Interpolate Within Observed</a></li>
+<li class="chapter" data-level="5.6" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interplate-prior-to-observed"><i class="fa fa-check"></i><b>5.6</b> Interplate Prior to Observed</a></li>
+<li class="chapter" data-level="5.7" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interpolate-subnationally"><i class="fa fa-check"></i><b>5.7</b> Interpolate Subnationally</a></li>
+<li class="chapter" data-level="5.8" data-path="covid-19-inference.html"><a href="covid-19-inference.html#explaining-variation-in-testing"><i class="fa fa-check"></i><b>5.8</b> Explaining Variation in Testing</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="covid-19-causal-inference.html"><a href="covid-19-causal-inference.html"><i class="fa fa-check"></i><b>6</b> COVID-19 Causal-Inference</a></li>
+<li class="chapter" data-level="7" data-path="covid-19-prediction.html"><a href="covid-19-prediction.html"><i class="fa fa-check"></i><b>7</b> COVID-19 Prediction</a></li>
+<li class="chapter" data-level="8" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>8</b> Conclusion</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="covid-19-measurement" class="section level1">
+<h1><span class="header-section-number">Chapter 4</span> COVID-19 Measurement</h1>
+<p>Government and health institutions around the world are racing to produce measures of the COVID-19 pandemic and response. This chapter catalogs and compiles a wide range of measures and evaluates their potential for helping us to infer what we cannot directly measure about the pandemic.</p>
+<div id="executive-summary" class="section level2">
+<h2><span class="header-section-number">4.1</span> Executive Summary</h2>
+<ul>
+<li><p>COVID Survailance
+Number of Tests Performed
+Number of Confirmed Cases
+Number of Fatalities due to COVID-19</p></li>
+<li><p>Influenza Surveillance
+Influenza Tests Performed
+Percent of Influenza Tests Positive</p></li>
+<li><p>Mortality
+Influenza and</p></li>
+</ul>
+<p>Any data aggregation and cleaning approach will have to deal with the following issues</p>
+<ul>
+<li>Missingness
+<ul>
+<li>Prior to the first reported observation</li>
+<li>After the last reported observation</li>
+<li>Within a time series between observations</li>
+<li>Unbalanced across different sources</li>
+</ul></li>
+<li>Structural Changes
+<ul>
+<li>Changes in reporting criteria/definitions</li>
+<li>Changes in sourcing for unerlying data</li>
+</ul></li>
+<li>Disagreement
+<ul>
+<li>One or more sources report different numbers</li>
+</ul></li>
+<li>Errors
+<ul>
+<li>Outliers</li>
+<li>Merging errors</li>
+</ul></li>
+<li>Bias
+<ul>
+<li>Correlation between missingness and measurement</li>
+<li>Attenuation bias</li>
+</ul></li>
+</ul>
+<div id="unit-of-analysis-and-definition-of-measurements" class="section level3">
+<h3><span class="header-section-number">4.1.1</span> Unit of Analysis and Definition of Measurements</h3>
+<p>The unit of analysis is the location-day. Locations can appear multiple times as aggregation in larger locations, e.g. the United States, Texas, and Bexar County all appear in the data. The raw data are produced by different institutions at different levels of political aggregation, and so there’s no guarantee that totals across lower levels of aggregation will equal totals at a higher level of spatial aggregation. The raw data record 3 measurements, CONFIRMED, DEATHS, and TESTED CONFIRMED should be the cumulative number of COVID-19 positive cases recorded in that location by and including that date. DEATHS which should be the cumulative number of deaths attributed to COVID-19. TESTED should be the cumulative number of test performed up to and including that date. When provided, we distinguish between TESTED_PEOPLE and TESTED_SAMPLES, where multiple tests may be necessary per person due to false positive and false negative rates. At this stage, these definitions should be taken as platonic constructs. It is how they are named and described in databases, news reporting, and government statistics, but that have wildly varying mapping between the reported number and the real world underlying theoretical measure.</p>
+</div>
+<div id="fist-order-cleaning-steps" class="section level3">
+<h3><span class="header-section-number">4.1.2</span> Fist Order Cleaning Steps</h3>
+<p>We take a conservative approach to data cleaning, rejecting noisy and contradictory observations as more representative of the data entry and institutional data generating processes than the underlying empirical data generating process that we actually care about. Our raw database begins with 1277219 rows. Removing rows with missing date information and collapsing duplicate dates from the same database taking the max of each value reported, reduces that number to 1074415 rows. We then further reject any row with: negative counts, death counts greater than confirmed, or a cumulative count not strictly greater than or equal to the day prior. Our theory of missingness is that very small or zero values are not meaningfully distinguishable from missing. We therefore set any 0 values to NA, and drop any rows with less than 2 confirmed cases. This reduces the count further to 978650 dataset-location-day observations.</p>
+</div>
+</div>
+<div id="covid-19-survailance" class="section level2">
+<h2><span class="header-section-number">4.2</span> COVID-19 Survailance</h2>
+<div id="sources-of-data" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> Sources of Data</h3>
+<p>The Global Census of Covid-19 Counts (GC3) currently aggregates 31 databases. The databases vary drastically in size, scope, collection method, and purpose. On the small end are small github repositories built around collecting a single country’s published statistics, often available in an unstructured form on a government website in a native language. Others are official government statistics reported directly to and compiled by international organizations, like the World Health Organization (WHO) or the European Centre for Disease Prevention and Control. Some are news organizations that collect and compile official government statistics, like the New York Times and Reuters. Nonprofits like the Covidtracking Project compile records on specific issues like testing. Wikipedia provides an interface for a massive army of volunteers to enter in statistics into tabular formats that can later be scraped. The largest and most comprehensive scraping effort is the Corona Data Scraper from the Covid Atlas which only consumes sources directly from government and health organizations (excluding news and wikipeda). These all in turn are then ingested by larger aggregation projects. Johns Hopkins University Center for Systems Science and Engineering (JHU-CSSE) is the most widely used aggregator by downstream projects. Both Microsoft’s Bing research Unit and Yahoo! have in turn recently made available their knowledge graph coverage of Covid-19 counts.</p>
+<p>Their names, links, and cleaned observation counts appear in the table below.</p>
+<div id="htmlwidget-1464d281c3891bccb273" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1464d281c3891bccb273">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"],["bing","jh-csse","yahoo","usafacts","nyt","coronadatascraper","morgenpost","wikipedia","who","covid19_eu","ecdc","dxy","covid_19_uk","finddx","covid19japan","toyo_keizai","who_owid","covidtracking","openMX","covid19india","imhfw","dpc","ds4c","bhm","CoronaWatchNL","TnCovid","iedcr","covid19br","wikipedia_first_case","covid19za","statista"],[154719,148512,144846,136957,131229,124922,23211,20285,14813,14093,13909,12425,7926,6721,3705,3070,2732,2477,1963,1800,1793,1642,1400,1032,815,708,409,235,211,76,14]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>dataset<\/th>\n      <th>n<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":20,"autoWidth":true,"columnDefs":[{"className":"dt-right","targets":2},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[10,20,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+<p>Which databases will provide the most unique information is difficult to tell apriori. The Upset plot below shows the number of unique location-day-variable observations provided by each database along the vertical axis and the number found only in that database an no other. In general, the databases with the most observations and that rely on direct collection from raw sources rather than aggregation of others, tend to provide the most unique information. For example, Corona Data Scraper provides both the most total and most unique observations.
+The most unique contributions come from the Corona Data Scraper Project, which might be anticipated by their overall size. The second most unique observations however comes from Wikipedia which is surprising because our treatment of it is currently ad hoc and it should already be ingested by other sources. It goes to show that no single source, or even no small combination of sources, is sufficient to provide full temporal and spatial coverage over even this relatively brief period of the Covid-19 pandemic.</p>
+<p><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/upset-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<div id="what-is-their-geographic-coverage" class="section level4">
+<h4><span class="header-section-number">4.2.1.1</span> What is their geographic coverage?</h4>
+</div>
+<div id="country-level-data-availability" class="section level4">
+<h4><span class="header-section-number">4.2.1.2</span> Country Level Data Availability</h4>
+<p>Despite this major effort by data producers, collectors, and aggregators, there is still major geographic variation in availability across countries. Most notably in availability of counts on number of tests performed, particularly in Central Africa.</p>
+<div class="figure" style="text-align: center"><span id="fig:nice-fig2"></span>
+<img src="HowToBeCarefulWithCovid19Counts_files/figure-html/nice-fig2-1.png" alt="Data coverage by country." width="1440" />
+<p class="caption">
+Figure 4.1: Data coverage by country.
+</p>
+</div>
+</div>
+<div id="stateprovince-level-data-availability" class="section level4">
+<h4><span class="header-section-number">4.2.1.3</span> State/Province Level Data Availability</h4>
+<p>Disparities in coverage across countries is most dramatic at the subnational level.</p>
+<div class="figure" style="text-align: center"><span id="fig:nice-fig3"></span>
+<img src="HowToBeCarefulWithCovid19Counts_files/figure-html/nice-fig3-1.png" alt="Data coverage by State/Province" width="1440" />
+<p class="caption">
+Figure 4.2: Data coverage by State/Province
+</p>
+</div>
+</div>
+</div>
+<div id="county-district-level-data-availability" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> County District Level Data Availability</h3>
+<p>This takes a long time to run so we’re disabling it until the end</p>
+<p>This takes a long time to run so we’re disabling it until the end</p>
+</div>
+<div id="what-is-their-temporal-coverage" class="section level3">
+<h3><span class="header-section-number">4.2.3</span> What is their temporal coverage?</h3>
+<div id="coverage-across-three-countries" class="section level4">
+<h4><span class="header-section-number">4.2.3.1</span> Coverage Across Three Countries</h4>
+<p>Figures x,y,z illustrate the problem of data coverage for 3 countries, China, Italy, and the U.S.</p>
+<p>China outright refuses to release daily counts of testing. Only three databases document the beginning of the outbreak, the ECDC, the WHO, and Yahoo. On April 17, China <a href="http://en.nhc.gov.cn/2020-04/17/c_79285.htm">changed its reporting</a> which added 1,290 more deaths for Wuhan city only. The change is not retrospective, it shows up only a sharp discontinuity across multiple datasets.</p>
+<p><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/p_over_time_by_source_china1-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Italy’s coverage across datasets is fairly good and uniform, though there are breaks in coverage of testing for some datasets as well as variation in when each dataset starts tracking testing.</p>
+<p><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/p_over_time_by_source_italy1-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>The U.S. has a great deal of coverage, but also a great deal of disagreement in that coverage. There is a stair step pattern in confirmed and deaths for Bing, WHO, and Wikipedia. In others reporting from day to day looks more continuous. There is also a change in reporting in late February that shows us a sharp vertical discontinuity across most datasets, though the size of the jump varies. There is also less temporal coverage of testing than is available from the caronavirus tracking project at the state level. Why those state level estiamtes aren’t totaled and available at the national level is a question.</p>
+<p><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/p_over_time_by_source_us1-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>New York has been the most heavily hit by COVID-19 in the U.S. Two sources, CornaDataScraper and the Covid Tracking Project have coverage over nearly the entire period. However, only one shows a sharp discontinuity in testing around March 10th. Digging into that disagreement more, the CTP rates New York’s data release a B quality, coming from snapshots of press conferences and then switching to screenshots of New York’s “Department of Health Covid-19 Tracker” website.</p>
+<p><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/p_over_time_by_source_new_york_state1-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="where-and-how-do-they-disagree" class="section level3">
+<h3><span class="header-section-number">4.2.4</span> Where and How do they Disagree?</h3>
+</div>
+</div>
+<div id="influenza-survailance" class="section level2">
+<h2><span class="header-section-number">4.3</span> Influenza Survailance</h2>
+<p>This is the main page for links on weekly mortality data
+<a href="https://www.cdc.gov/nchs/nvss/vsrr/covid_weekly/" class="uri">https://www.cdc.gov/nchs/nvss/vsrr/covid_weekly/</a>
+“The National Center for Health Statistics (NCHS) uses incoming data from death certificates to produce provisional COVID-19 death counts. These include deaths occurring within the 50 states and the District of Columbia. COVID-19 deaths are identified using a new ICD–10 code. When COVID-19 is reported as a cause of death – or when it is listed as a “probable” or “presumed” cause — the death is coded as U07.1. This can include cases with or without laboratory confirmation."</p>
+<p>“Provisional COVID-19 Death Counts by Week Ending Date and State”
+<a href="https://data.cdc.gov/NCHS/Provisional-COVID-19-Death-Counts-by-Week-Ending-D/r8kw-7aab" class="uri">https://data.cdc.gov/NCHS/Provisional-COVID-19-Death-Counts-by-Week-Ending-D/r8kw-7aab</a></p>
+<p>There is technically raw data but the csv is aweful
+Gives you age stratified number tested and the percent positive
+<a href="https://www.cdc.gov/coronavirus/2019-ncov/covid-data/covidview/05082020/csv/public-health-lab.csv" class="uri">https://www.cdc.gov/coronavirus/2019-ncov/covid-data/covidview/05082020/csv/public-health-lab.csv</a>
+<a href="https://data.cdc.gov/api/views/r8kw-7aab/rows.csv?accessType=DOWNLOAD" class="uri">https://data.cdc.gov/api/views/r8kw-7aab/rows.csv?accessType=DOWNLOAD</a></p>
+<p>For now I might have to download this all by hand</p>
+<p>CDC COVID-NET Weekly Report: COVID-19-Associated
+Hospitalizations Application Quick Reference Guide
+<a href="https://gis.cdc.gov/grasp/COVIDNet/Documents/316429-A_FS_COVID-NET%20Helpquick%20Reference%20Guide_FINAL.pdf" class="uri">https://gis.cdc.gov/grasp/COVIDNet/Documents/316429-A_FS_COVID-NET%20Helpquick%20Reference%20Guide_FINAL.pdf</a>
+“Data gathered are used to estimate agespecific hospitalization rates on a weekly basis and describe characteristics of persons hospitalized with COVID-19. Laboratory confirmation is dependent on clinicianordered SARS-CoV-2 testing. Therefore, the rates provided are likely to be underestimated as COVID-19-associated hospitalizations can be missed due to test availability and provider or facility testing practices.”</p>
+<p>“Mortality Surveillance
+The National Center for Health Statistics (NCHS) collects death certificate data from vital statistics offices for all deaths occurring in the United States. Based on death certificate data available on May 7, 2020, 10.6% of all deaths occurring during the week ending May 2, 2020 (week 18) were due to pneumonia, influenza or COVID-19 (PIC). This is the third week of a stable or declining percentage of deaths due to PIC;”</p>
+<p><a href="https://catalog.data.gov/dataset/deaths-from-pneumonia-and-influenza-pi-and-all-deaths-by-state-and-region-national-center-" class="uri">https://catalog.data.gov/dataset/deaths-from-pneumonia-and-influenza-pi-and-all-deaths-by-state-and-region-national-center-</a></p>
+<p><a href="https://www.cdc.gov/nchs/nvss/covid-19.htm" class="uri">https://www.cdc.gov/nchs/nvss/covid-19.htm</a>
+Updated daily, Monday–Friday</p>
+<p>Provisional Death Counts for Coronavirus Disease (COVID-19)</p>
+<p>Tabulated data on provisional death counts for COVID-19, by week, jurisdiction, and age in the U.S.</p>
+<p>Updated weekly</p>
+<p>Weekly State-Specific Data Updates by Select Demographic and Geographic Characteristics</p>
+<p>Tabulated data on provisional COVID-19 deaths by race and Hispanic origin</p>
+<p>Updated weekly</p>
+<p>Excess Deaths Associated with COVID-19</p>
+<p>Visualizations of estimates of excess deaths related to the COVID-19 pandemic</p>
+</div>
+<div id="motaility-survailance" class="section level2">
+<h2><span class="header-section-number">4.4</span> Motaility Survailance</h2>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="day-zero.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="covid-19-inference.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/03-Measurement.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["HowToBeCarefulWithCovid19Counts.pdf", "HowToBeCarefulWithCovid19Counts.epub"],
+"toc": {
+"collapse": "none"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

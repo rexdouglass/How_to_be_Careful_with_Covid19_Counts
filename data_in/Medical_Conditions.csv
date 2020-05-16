@@ -1,0 +1,16 @@
+Selected Underlying Medical Conditions of COVID-19-Associated Hospitalizations (data downloaded on 5/10/2020)
+YEAR,MEDICAL CONDITION,CHILDREN-COUNT,CHILDREN-PERCENT(%),ADULTS-COUNT,ADULTS-PERCENT(%),FEMALES (15-44 YR)-COUNT,FEMALES (15-44 YR)-PERCENT(%)
+2020,Asthma,3,16.7,346,12.2,N/A,N/A
+2020,Cardiovascular disease,1,5.6,977,34.5,N/A,N/A
+2020,Chronic lung disease,N/A,N/A,610,21.5,N/A,N/A
+2020,Immune suppression,N/A,N/A,289,10.2,N/A,N/A
+2020,Metabolic disease,1,5.6,1177,41.5,N/A,N/A
+2020,Neurologic disease,2,11.1,610,21.6,N/A,N/A
+2020,Other disease,4,22.2,136,4.8,N/A,N/A
+2020,No known condition,8,42.1,244,8.5,N/A,N/A
+2020,Autoimmune disease ,N/A,N/A,85,3.0,N/A,N/A
+2020,Obesity,3,37.5,1313,49.8,N/A,N/A
+2020,Pregnancy,N/A,N/A,N/A,N/A,50,14.2
+2020,Renal disease,N/A,N/A,438,15.5,N/A,N/A
+2020,Gastrointestinal/liver disease,N/A,N/A,135,4.8,N/A,N/A
+2020,Hypertension,1,5.9,1649,58.9,N/A,N/A

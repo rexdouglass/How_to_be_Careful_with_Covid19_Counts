@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Day Zero | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists</title>
+  <meta name="description" content="Chapter 3 Day Zero | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Day Zero | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Day Zero | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
+  
+  
+  
+
+<meta name="author" content="Rex W. Douglass" />
+
+
+<meta name="date" content="2020-05-15" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="empirical-background.html"/>
+<link rel="next" href="covid-19-measurement.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.12/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">How to be Careful with Covid-19 Counts</a></li>
+<li><a href="https://www.rexdouglass.com" target="_blank">Rex W. Douglass</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Executive Summary</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#key-takeaways-tldr"><i class="fa fa-check"></i><b>1.1</b> Key Takeaways (TLDR)</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#key-caveats"><i class="fa fa-check"></i><b>1.2</b> Key Caveats</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="empirical-background.html"><a href="empirical-background.html"><i class="fa fa-check"></i><b>2</b> Empirical Background</a></li>
+<li class="chapter" data-level="3" data-path="day-zero.html"><a href="day-zero.html"><i class="fa fa-check"></i><b>3</b> Day Zero</a></li>
+<li class="chapter" data-level="4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html"><i class="fa fa-check"></i><b>4</b> COVID-19 Measurement</a><ul>
+<li class="chapter" data-level="4.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#executive-summary"><i class="fa fa-check"></i><b>4.1</b> Executive Summary</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#unit-of-analysis-and-definition-of-measurements"><i class="fa fa-check"></i><b>4.1.1</b> Unit of Analysis and Definition of Measurements</a></li>
+<li class="chapter" data-level="4.1.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#fist-order-cleaning-steps"><i class="fa fa-check"></i><b>4.1.2</b> Fist Order Cleaning Steps</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#covid-19-survailance"><i class="fa fa-check"></i><b>4.2</b> COVID-19 Survailance</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#sources-of-data"><i class="fa fa-check"></i><b>4.2.1</b> Sources of Data</a></li>
+<li class="chapter" data-level="4.2.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#county-district-level-data-availability"><i class="fa fa-check"></i><b>4.2.2</b> County District Level Data Availability</a></li>
+<li class="chapter" data-level="4.2.3" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#what-is-their-temporal-coverage"><i class="fa fa-check"></i><b>4.2.3</b> What is their temporal coverage?</a></li>
+<li class="chapter" data-level="4.2.4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#where-and-how-do-they-disagree"><i class="fa fa-check"></i><b>4.2.4</b> Where and How do they Disagree?</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#influenza-survailance"><i class="fa fa-check"></i><b>4.3</b> Influenza Survailance</a></li>
+<li class="chapter" data-level="4.4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#motaility-survailance"><i class="fa fa-check"></i><b>4.4</b> Motaility Survailance</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="covid-19-inference.html"><a href="covid-19-inference.html"><i class="fa fa-check"></i><b>5</b> COVID-19 Inference</a><ul>
+<li class="chapter" data-level="5.1" data-path="covid-19-inference.html"><a href="covid-19-inference.html#confirmed-cases"><i class="fa fa-check"></i><b>5.1</b> Confirmed Cases</a></li>
+<li class="chapter" data-level="5.2" data-path="covid-19-inference.html"><a href="covid-19-inference.html#confirmed-case-fatality-rate-ccfr"><i class="fa fa-check"></i><b>5.2</b> Confirmed Case Fatality Rate (CCFR)</a></li>
+<li class="chapter" data-level="5.3" data-path="covid-19-inference.html"><a href="covid-19-inference.html#tests"><i class="fa fa-check"></i><b>5.3</b> Tests</a></li>
+<li class="chapter" data-level="5.4" data-path="covid-19-inference.html"><a href="covid-19-inference.html#tested-people-versus-tested-samples"><i class="fa fa-check"></i><b>5.4</b> Tested People versus Tested Samples</a></li>
+<li class="chapter" data-level="5.5" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interpolate-within-observed"><i class="fa fa-check"></i><b>5.5</b> Interpolate Within Observed</a></li>
+<li class="chapter" data-level="5.6" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interplate-prior-to-observed"><i class="fa fa-check"></i><b>5.6</b> Interplate Prior to Observed</a></li>
+<li class="chapter" data-level="5.7" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interpolate-subnationally"><i class="fa fa-check"></i><b>5.7</b> Interpolate Subnationally</a></li>
+<li class="chapter" data-level="5.8" data-path="covid-19-inference.html"><a href="covid-19-inference.html#explaining-variation-in-testing"><i class="fa fa-check"></i><b>5.8</b> Explaining Variation in Testing</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="covid-19-causal-inference.html"><a href="covid-19-causal-inference.html"><i class="fa fa-check"></i><b>6</b> COVID-19 Causal-Inference</a></li>
+<li class="chapter" data-level="7" data-path="covid-19-prediction.html"><a href="covid-19-prediction.html"><i class="fa fa-check"></i><b>7</b> COVID-19 Prediction</a></li>
+<li class="chapter" data-level="8" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>8</b> Conclusion</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="day-zero" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> Day Zero</h1>
+<p>One method for estimating the introduction date of COVID-19 is to establish the time and location of the first observed common ancestor. The first COVID-19 genome sequence was published January 5 2020. Since then, tens of thousands of sequences have been taken around the globe at different times. These sequences differ by slight mutations. These mutations occur at a predictable rate. So while that January 5 sequence was not the common ancestor of every observed sequence, we can speculate about what that common ancestry must have looked like and how far back in time it must have existed in order to produce all of the variation we see in its descendants.</p>
+<p>A survey of phylogenetic estimates of the introduction of COVID-19 place it sometime between October 6, 2019 and December 2019 <span class="citation">(van Dorp et al. <a href="#ref-vandorpEmergenceGenomicDiversity2020" role="doc-biblioref">2020</a>)</span>. They fit a root-to-tip regression which is just the phylogenetic on the left hand side and the date of sampling on the right hand side. They fit it using the BactDating package.</p>
+<p>Because the first observed common ancestor is only the first acquired not the first produced in the wild, further attempts to wind back the clock.</p>
+<p><a href="https://www.nature.com/articles/s41586-020-2008-3?fbclid=IwAR1VfqWqfRxS1Fi7Mh8yK4X03bcT8VUnnaymxMGlXYdwzWLPv4XhCIuYmFY" class="uri">https://www.nature.com/articles/s41586-020-2008-3?fbclid=IwAR1VfqWqfRxS1Fi7Mh8yK4X03bcT8VUnnaymxMGlXYdwzWLPv4XhCIuYmFY</a>
+Preliminary aetiological investigations excluded the presence of influenza virus, Chlamydia pneumoniae and Mycoplasma pneumoniae using commercial pathogen antigen-detection kits, and this was confirmed by PCR. Other common respiratory pathogens, including human adenoviruses, also tested negative by quantitative PCR (qPCR) (Extended Data Fig. 2). Although a combination of antibiotic, antiviral and glucocorticoid therapy was administered, the patient exhibited respiratory failure and was given high-flow non-invasive ventilation. T
+This virus strain was designated as WH-Human 1 coronavirus (WHCV) (and has also been referred to as ‘2019-nCoV’) and its whole genome sequence (29,903 nt) has been assigned GenBank accession number MN908947.</p>
+<p><a href="https://www.nytimes.com/2020/04/08/science/new-york-coronavirus-cases-europe-genomes.html" class="uri">https://www.nytimes.com/2020/04/08/science/new-york-coronavirus-cases-europe-genomes.html</a>
+“I’m quite confident that it was not spreading in December in the United States,” Dr. Bedford said. “There may have been a couple other introductions in January that didn’t take off in the same way.”"</p>
+<p>“Dr. Heguy and her colleagues found some New York viruses that shared unique mutations not found elsewhere. “That’s when you know you’ve had a silent transmission for a while,” she said.
+Dr. Heguy estimated that the virus began circulating in the New York area a couple of months ago."</p>
+<p>And researchers at Mount Sinai started sequencing the genomes of patients coming through their hospital. They found that the earliest cases identified in New York were not linked to later ones.</p>
+<p>“Two weeks later, we start seeing viruses related to each other,” said Ana Silvia Gonzalez-Reiche, a member of the Mount Sinai team.</p>
+<p>Dr. Gonzalez-Reiche and her colleagues found that these viruses were practically identical to viruses found around Europe. They cannot say on what particular flight a particular virus arrived in New York. But they write that the viruses reveal “a period of untracked global transmission between late January to mid-February.”</p>
+<p>So far, the Mount Sinai researchers have identified seven separate lineages of viruses that entered New York and began circulating. “We will probably find more,” Dr. van Bakel said.</p>
+<p>Introduction in New York <span class="citation">(Gonzalez-Reiche et al. <a href="#ref-gonzalez-reicheIntroductionsEarlySpread2020" role="doc-biblioref">2020</a>)</span></p>
+<p>GISAID Initiative EpiCoV platform</p>
+<p>One of the first indicators of the COVID-19 pandemic was an increase in reported flu-like symptoms with negative influenza tests. A proxy measure based on this Influenza-Negative InfluenzaLike Illness (fnILI) Z-Score has been found to be a leading indicator for confirmed COVID-19 cases and deaths <span class="citation">(Mirza, Malik, and Omer <a href="#ref-mirzaInfluenzaNegativeInfluenzaLikeIllness2020" role="doc-biblioref">2020</a>)</span>.</p>
+<p>To what degree do COVID-19 counts simply reflect testing? In the U.S., the number of new confirmed cases are highly correlated with the number of new tests administered <span class="citation">(Kaashoek and Santillana <a href="#ref-kaashoekCOVID19PositiveCases2020" role="doc-biblioref">2020</a>)</span>.</p>
+<p><span class="citation">(J. Lu and Meyer <a href="#ref-luForecastingFluActivity2020" role="doc-biblioref">2020</a>)</span></p>
+<p><span class="citation">(“Near-Term Forecasts of Influenza-Like Illness: An Evaluation of Autoregressive Time Series Approaches” <a href="#ref-NeartermForecastsInfluenzalike2019" role="doc-biblioref">2019</a>)</span></p>
+<p>Real-time, or near real-time, observations are critical for the generation of real-time forecasts. The primary data source for ILI forecasts in the US is provider-reported outpatient ILI visit rates collected through the ILINet (Centers for Disease Control and Prevention, 2018a). Several methods for supplementing these surveillance data with alternate estimates of ILI inferred from public non-surveillance proxies have also been proposed (Wang et al., 2015; Farrow, 2016; Kandula et al., 2017; Santillana et al., 2016, 2015; Lampos et al., 2015; Paul et al., 2014; Yang et al., 2015).</p>
+<p><span class="citation">(F. S. Lu et al. <a href="#ref-luEstimatingPrevalenceCOVID192020" role="doc-biblioref">2020</a>)</span></p>
+<p>We’ll begin with a deceptively simple question, when was the first confirmed case in each place? We’ll then conclude this chapter with the less obvious question, when was the first real COVID-19 infecton in each place?</p>
+<p>Specifically, the adjusted divergences (div-IDEA and div-Vir ) and COVID Scaling
+methods incorporate an increased probability that an individual with ILI symptoms will seek
+medical attention after the start of the COVID-19 outbreak based on recent survey data [20, 21].</p>
+<p>One possible explanation is that many deaths caused by COVID-19 are not being ocially counted as COVID-19
+deaths because of a lack of testing (and that accounting for increased pneumonia deaths does not
+fully capture this) [24]; further evidence of this reasoning is that New York City started reporting
+plausible COVID-19 deaths (as in, not needing a test result) [25],</p>
+<p>By design and due to the utilized data sources, our estimates using data from ILINet and
+confirmed cases (Divergence method and COVID-Scaling) likely better capture the number of
+COVID-19 cases as they would be detected at the time of hospitalization; thus, they may be inherently lagged by roughly 12 days after initial infection [26].</p>
+<p>Our approaches could be expanded to include other data sources and methods to estimate
+8
+prevalence, such as Google searches [27, 28, 29], electronic health record data [30], clinician’s
+searches [31], and/or mobile health data [32].</p>
+<p>The ILI-based methods presented
+in this study demonstrate the potential of existing and well-established ILI surveillance systems to
+monitor future pandemics that, like COVID-19, present similar symptoms to ILI. This is especially
+promising given the WHO initiative launched in 2019 to expand influenza surveillance globally [33].
+Incorporating estimates from influenza and COVID-19 forecasting and participatory surveillance
+systems may prove useful in future studies as well [34, 35, 36, 37, 38, 39].</p>
+<p>5 Data and Methods
+CDC ILI and Virology: The CDC US Outpatient Influenza-like Illness Surveillance Network
+(ILINet) monitors the level of ILI circulating in the US at any given time by gathering information
+from physicians’ reports about patients seeking medical attention for ILI symptoms.</p>
+<p>ILI is defined as having a fever (temperature of 37.8+ Celsius) and a cough or a sore throat. ILINet provides public health ocials with an estimate of ILI activity in the population but has a known availability delay of 7 to 14 days.</p>
+<p>National level ILI activity is obtained by combining state-specific data weighted by state population [12].</p>
+<p>Additionally, the CDC reports information from the WHO and the National Respiratory and Enteric Virus Surveillance System (NREVSS) on laboratory test results for influenza types A and B. The data is available from the CDC FluView dashboard [11]. We omit Florida from our analysis as ILINet data is not available for Florida.</p>
+<p>Early evidence for COVID-19 may be from early warning FLU systems. FluView, above normal Flu symtpoms starting in November.</p>
+<p>According to CDCFlu, Reported cases of influenza are picking up across the US indicating an early and potentially severe start to flu season (the red line with flags, below).</p>
+<p>The number of influenza tests sent but returning negative could be an early indicator
+<a href="https://twitter.com/CDCFlu/status/1224338758943825920" class="uri">https://twitter.com/CDCFlu/status/1224338758943825920</a></p>
+<p>“CDC Flu
+<span class="citation">(<span class="citeproc-not-found" data-reference-id="CDCFlu"><strong>???</strong></span>)</span>
+19 Nov 2019
+More
+According to the latest #FluView report, some parts of the country are already seeing moderate to high levels of flu, marking an early start to their flu season. Other parts of the country are still seeing little activity. Learn more: <a href="https://go.usa.gov/xpK6R" class="uri">https://go.usa.gov/xpK6R</a>”</p>
+<p><a href="https://twitter.com/CDCFlu/status/1197910891393638400" class="uri">https://twitter.com/CDCFlu/status/1197910891393638400</a></p>
+<p>ILINet
+Nationwide during week 17, 1.8% of patient visits reported through the U.S. Outpatient Influenza-like Illness Surveillance Network (ILINet) were due to influenza-like illness (ILI). This percentage is below the national baseline of 2.4%.</p>
+<p>Mirza et al. (2020) propose a proxy measure for COVID-19 based on positive influenza symptoms but negative influenza clinical test.</p>
+<p>Influenza-Negative Influenza-Like Illness (fnILI) Z-Score as a Proxy for Incidence and Mortality of COVID-19
+View ORCID ProfileFatima N Mirza, View ORCID ProfileAmyn A. Malik, View ORCID ProfileSaad B. Omer
+<a href="https://www.medrxiv.org/content/10.1101/2020.04.22.20075770v1" class="uri">https://www.medrxiv.org/content/10.1101/2020.04.22.20075770v1</a></p>
+<p>Types of coronavirus
+<a href="https://www.cdc.gov/coronavirus/types.html" class="uri">https://www.cdc.gov/coronavirus/types.html</a></p>
+<p><a href="https://github.com/reichlab/ncov/blob/master/analyses/ili-labtest-report.pdf" class="uri">https://github.com/reichlab/ncov/blob/master/analyses/ili-labtest-report.pdf</a>
+Reich NG, Ray EL, Gibson GC, Cramer E RC. Looking for evidence of a high burden of
+230 COVID-19 in the United States from influenza-like illness data. Github. 2020.</p>
+<p>Everything revolves around what the true R0 was and how many cases were in each country and when. We’ll never see the world again where people don’t know about COVID and so R_0 is the upper bound of R_t. There must be some statistical model mapping testing to how many true in the population there is. Like, out of a random sample, what positive rate would you expect given a certain number of real cases in the wild. Now what if it’s not a random sample, and it’s correlated with severity? Basically, everything points to everything else here, there’s no such thing as a real point estimate just big bounds that you try to tie down as much as you can using other information you have.</p>
+<p>So for example, true R_0 is probably within ranges of other diseases we know about. We can use that as a prior.</p>
+<p>There’s no such thing as real patient zero because contries are constantly trading cases with each other. But the genetics data should tell us a bit about that right?</p>
+
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-gonzalez-reicheIntroductionsEarlySpread2020">
+<p>Gonzalez-Reiche, Ana S., Matthew M. Hernandez, Mitchell Sullivan, Brianne Ciferri, Hala Alshammary, Ajay Obla, Shelcie Fabre, et al. 2020. “Introductions and Early Spread of SARS-CoV-2 in the New York City Area.” <em>medRxiv</em>, April, 2020.04.08.20056929. <a href="https://doi.org/10.1101/2020.04.08.20056929">https://doi.org/10.1101/2020.04.08.20056929</a>.</p>
+</div>
+<div id="ref-kaashoekCOVID19PositiveCases2020">
+<p>Kaashoek, Justin, and Mauricio Santillana. 2020. “COVID-19 Positive Cases, Evidence on the Time Evolution of the Epidemic or an Indicator of Local Testing Capabilities? A Case Study in the United States.” SSRN Scholarly Paper ID 3574849. Rochester, NY: Social Science Research Network. <a href="https://doi.org/10.2139/ssrn.3574849">https://doi.org/10.2139/ssrn.3574849</a>.</p>
+</div>
+<div id="ref-luEstimatingPrevalenceCOVID192020">
+<p>Lu, Fred S., Andrew Nguyen, Nick Link, and Mauricio Santillana. 2020. “Estimating the Prevalence of COVID-19 in the United States: Three Complementary Approaches,” April.</p>
+</div>
+<div id="ref-luForecastingFluActivity2020">
+<p>Lu, Junyi, and Sebastian Meyer. 2020. “Forecasting Flu Activity in the United States: Benchmarking an Endemic-Epidemic Beta Model.” <em>International Journal of Environmental Research and Public Health</em> 17 (4). <a href="https://doi.org/10.3390/ijerph17041381">https://doi.org/10.3390/ijerph17041381</a>.</p>
+</div>
+<div id="ref-mirzaInfluenzaNegativeInfluenzaLikeIllness2020">
+<p>Mirza, Fatima N., Amyn A. Malik, and Saad B. Omer. 2020. “Influenza-Negative Influenza-Like Illness (fnILI) Z-Score as a Proxy for Incidence and Mortality of COVID-19.” <em>medRxiv</em>, April, 2020.04.22.20075770. <a href="https://doi.org/10.1101/2020.04.22.20075770">https://doi.org/10.1101/2020.04.22.20075770</a>.</p>
+</div>
+<div id="ref-NeartermForecastsInfluenzalike2019">
+<p>“Near-Term Forecasts of Influenza-Like Illness: An Evaluation of Autoregressive Time Series Approaches.” 2019. <em>Epidemics</em> 27 (June): 41–51. <a href="https://doi.org/10.1016/j.epidem.2019.01.002">https://doi.org/10.1016/j.epidem.2019.01.002</a>.</p>
+</div>
+<div id="ref-vandorpEmergenceGenomicDiversity2020">
+<p>van Dorp, Lucy, Mislav Acman, Damien Richard, Liam P. Shaw, Charlotte E. Ford, Louise Ormond, Christopher J. Owen, Juanita Pang, Cedric CS Tan, and Florencia AT Boshier. 2020. “Emergence of Genomic Diversity and Recurrent Mutations in SARS-CoV-2.” <em>Infection, Genetics and Evolution</em>, 104351.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="empirical-background.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="covid-19-measurement.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/02-Background.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["HowToBeCarefulWithCovid19Counts.pdf", "HowToBeCarefulWithCovid19Counts.epub"],
+"toc": {
+"collapse": "none"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

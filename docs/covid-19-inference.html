@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 COVID-19 Inference | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists</title>
+  <meta name="description" content="Chapter 5 COVID-19 Inference | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 COVID-19 Inference | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 COVID-19 Inference | How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists" />
+  
+  
+  
+
+<meta name="author" content="Rex W. Douglass" />
+
+
+<meta name="date" content="2020-05-15" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="covid-19-measurement.html"/>
+<link rel="next" href="covid-19-causal-inference.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.12/datatables.js"></script>
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">How to be Careful with Covid-19 Counts</a></li>
+<li><a href="https://www.rexdouglass.com" target="_blank">Rex W. Douglass</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Executive Summary</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#key-takeaways-tldr"><i class="fa fa-check"></i><b>1.1</b> Key Takeaways (TLDR)</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#key-caveats"><i class="fa fa-check"></i><b>1.2</b> Key Caveats</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="empirical-background.html"><a href="empirical-background.html"><i class="fa fa-check"></i><b>2</b> Empirical Background</a></li>
+<li class="chapter" data-level="3" data-path="day-zero.html"><a href="day-zero.html"><i class="fa fa-check"></i><b>3</b> Day Zero</a></li>
+<li class="chapter" data-level="4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html"><i class="fa fa-check"></i><b>4</b> COVID-19 Measurement</a><ul>
+<li class="chapter" data-level="4.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#executive-summary"><i class="fa fa-check"></i><b>4.1</b> Executive Summary</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#unit-of-analysis-and-definition-of-measurements"><i class="fa fa-check"></i><b>4.1.1</b> Unit of Analysis and Definition of Measurements</a></li>
+<li class="chapter" data-level="4.1.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#fist-order-cleaning-steps"><i class="fa fa-check"></i><b>4.1.2</b> Fist Order Cleaning Steps</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#covid-19-survailance"><i class="fa fa-check"></i><b>4.2</b> COVID-19 Survailance</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#sources-of-data"><i class="fa fa-check"></i><b>4.2.1</b> Sources of Data</a></li>
+<li class="chapter" data-level="4.2.2" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#county-district-level-data-availability"><i class="fa fa-check"></i><b>4.2.2</b> County District Level Data Availability</a></li>
+<li class="chapter" data-level="4.2.3" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#what-is-their-temporal-coverage"><i class="fa fa-check"></i><b>4.2.3</b> What is their temporal coverage?</a></li>
+<li class="chapter" data-level="4.2.4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#where-and-how-do-they-disagree"><i class="fa fa-check"></i><b>4.2.4</b> Where and How do they Disagree?</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#influenza-survailance"><i class="fa fa-check"></i><b>4.3</b> Influenza Survailance</a></li>
+<li class="chapter" data-level="4.4" data-path="covid-19-measurement.html"><a href="covid-19-measurement.html#motaility-survailance"><i class="fa fa-check"></i><b>4.4</b> Motaility Survailance</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="covid-19-inference.html"><a href="covid-19-inference.html"><i class="fa fa-check"></i><b>5</b> COVID-19 Inference</a><ul>
+<li class="chapter" data-level="5.1" data-path="covid-19-inference.html"><a href="covid-19-inference.html#confirmed-cases"><i class="fa fa-check"></i><b>5.1</b> Confirmed Cases</a></li>
+<li class="chapter" data-level="5.2" data-path="covid-19-inference.html"><a href="covid-19-inference.html#confirmed-case-fatality-rate-ccfr"><i class="fa fa-check"></i><b>5.2</b> Confirmed Case Fatality Rate (CCFR)</a></li>
+<li class="chapter" data-level="5.3" data-path="covid-19-inference.html"><a href="covid-19-inference.html#tests"><i class="fa fa-check"></i><b>5.3</b> Tests</a></li>
+<li class="chapter" data-level="5.4" data-path="covid-19-inference.html"><a href="covid-19-inference.html#tested-people-versus-tested-samples"><i class="fa fa-check"></i><b>5.4</b> Tested People versus Tested Samples</a></li>
+<li class="chapter" data-level="5.5" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interpolate-within-observed"><i class="fa fa-check"></i><b>5.5</b> Interpolate Within Observed</a></li>
+<li class="chapter" data-level="5.6" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interplate-prior-to-observed"><i class="fa fa-check"></i><b>5.6</b> Interplate Prior to Observed</a></li>
+<li class="chapter" data-level="5.7" data-path="covid-19-inference.html"><a href="covid-19-inference.html#interpolate-subnationally"><i class="fa fa-check"></i><b>5.7</b> Interpolate Subnationally</a></li>
+<li class="chapter" data-level="5.8" data-path="covid-19-inference.html"><a href="covid-19-inference.html#explaining-variation-in-testing"><i class="fa fa-check"></i><b>5.8</b> Explaining Variation in Testing</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="covid-19-causal-inference.html"><a href="covid-19-causal-inference.html"><i class="fa fa-check"></i><b>6</b> COVID-19 Causal-Inference</a></li>
+<li class="chapter" data-level="7" data-path="covid-19-prediction.html"><a href="covid-19-prediction.html"><i class="fa fa-check"></i><b>7</b> COVID-19 Prediction</a></li>
+<li class="chapter" data-level="8" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>8</b> Conclusion</a></li>
+<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">How to be Careful with Covid-19 Counts: A Practical Guide for Data Scientists</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="covid-19-inference" class="section level1">
+<h1><span class="header-section-number">Chapter 5</span> COVID-19 Inference</h1>
+<p>In this chapter I will introduce parameters we wish to infer about COVID-19 spread and a modeling approach that can recover them from the observable introduced in the last chapter. I will add components to the model one piece at a time so that their function and impact on inference are clear.</p>
+<div id="confirmed-cases" class="section level2">
+<h2><span class="header-section-number">5.1</span> Confirmed Cases</h2>
+<p><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-37-1.png" width="100%" style="display: block; margin: auto;" /><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-37-2.png" width="100%" style="display: block; margin: auto;" /><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-37-3.png" width="100%" style="display: block; margin: auto;" /><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-37-4.png" width="100%" style="display: block; margin: auto;" /><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-37-5.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="confirmed-case-fatality-rate-ccfr" class="section level2">
+<h2><span class="header-section-number">5.2</span> Confirmed Case Fatality Rate (CCFR)</h2>
+<p>One parameter we can estimate directly from the data is the ratio of reported COVID-19 fatalities to the reported COVID-19 cases in an area. This should not be confused with the Case Fatality Rate (CFR) or the Infection Fatality Rate (IFR) which I discuss later. The CCFR is bounded between 0 and 1.</p>
+<p><span class="math inline">\(Confirmed Case Fataility Rate = \frac{ConfirmedCovid19Fatailities}{ConfirmedCovid19Cases}\)</span></p>
+<p><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-38-1.png" width="100%" style="display: block; margin: auto;" /><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-38-2.png" width="100%" style="display: block; margin: auto;" /><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-38-3.png" width="100%" style="display: block; margin: auto;" /><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-38-4.png" width="100%" style="display: block; margin: auto;" /><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-38-5.png" width="100%" style="display: block; margin: auto;" /><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-38-6.png" width="100%" style="display: block; margin: auto;" /></p>
+<p><span class="math inline">\(CFR=0.07 = \frac{}{}\)</span></p>
+<p><img src="HowToBeCarefulWithCovid19Counts_files/figure-html/unnamed-chunk-40-1.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="tests" class="section level2">
+<h2><span class="header-section-number">5.3</span> Tests</h2>
+</div>
+<div id="tested-people-versus-tested-samples" class="section level2">
+<h2><span class="header-section-number">5.4</span> Tested People versus Tested Samples</h2>
+</div>
+<div id="interpolate-within-observed" class="section level2">
+<h2><span class="header-section-number">5.5</span> Interpolate Within Observed</h2>
+</div>
+<div id="interplate-prior-to-observed" class="section level2">
+<h2><span class="header-section-number">5.6</span> Interplate Prior to Observed</h2>
+</div>
+<div id="interpolate-subnationally" class="section level2">
+<h2><span class="header-section-number">5.7</span> Interpolate Subnationally</h2>
+</div>
+<div id="explaining-variation-in-testing" class="section level2">
+<h2><span class="header-section-number">5.8</span> Explaining Variation in Testing</h2>
+<p>South Korea</p>
+<p>Vietnam
+<a href="https://www.reuters.com/article/us-health-coronavirus-vietnam-fight-insi-idUSKBN22B34H" class="uri">https://www.reuters.com/article/us-health-coronavirus-vietnam-fight-insi-idUSKBN22B34H</a></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="covid-19-measurement.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="covid-19-causal-inference.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/04-Inference.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["HowToBeCarefulWithCovid19Counts.pdf", "HowToBeCarefulWithCovid19Counts.epub"],
+"toc": {
+"collapse": "none"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

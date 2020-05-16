@@ -1,0 +1,214 @@
+
+```{r,warning=FALSE,message=FALSE,error=FALSE, results='hide' , include=FALSE}
+knitr::opts_chunk$set( out.width='100%', fig.asp=NULL, fig.align='center', echo=F, warning=FALSE,message=FALSE,error=FALSE, results='hide', cache=T  )
+
+#Notes to self
+#It's not like R notebook you have the knit every time you want to update html, you can't just save
+#You don't have to rerun the code or rebuild the whole book though.
+
+```
+
+# Empirical Background
+
+This is a study of variation in the COVID-19 pandemic. Coronavirus disease 19 (COVID-19) is the disease resulting from infection by the Severe acute respiratory syndrome-related coronavirus 2 (SARS-CoV-2)  [@gorbalenyaSpeciesSevereAcute2020]. The very first identified and genetically sequenced case of COVID-19 was on 26 December 2019 of a patient who was a worker at a seafood market in Wuhan China (@NovelCoronavirusPatients). The designation of pandemic was assigned by the World Health Organization on March 11, 2020 on the criteria that the disease is both new and has cases observed worldwide [@WHOWhatPandemic].
+
+
+Occupation, Income, Race
+Hospitlization COVID-19 Symptoms -> COVID-19 Tested
+Occupation -> COVID-19 Positive -> COVID-19 Symptoms
+
+Hospitalization Rates and Characteristics of Patients Hospitalized with Laboratory-Confirmed Coronavirus Disease 2019 — COVID-NET, 14 States, March 1–30, 2020
+https://www.cdc.gov/mmwr/volumes/69/wr/mm6915e3.htm
+[@gargHospitalizationRatesCharacteristics2020]
+
+Coronavirus Disease 2019 (COVID-19)-Associated Hospitalization Surveillance Network (COVID-NET)
+https://www.cdc.gov/coronavirus/2019-ncov/covid-data/covid-net/purpose-methods.html
+COVID-NET differs from hospitalizations reported in national and state case counts in two ways. First, state and national COVID-19 case reporting are based on all people who test positive for COVID-19 in the United States. COVID-NET is limited to COVID-19-associated hospitalizations captured in the COVID-NET surveillance area. Second, COVID-NET reports rates and not just counts. These rates show how many people are hospitalized with COVID-19 in the surveillance area, compared to the entire number of people residing in that area.
+COVID-NET comprises 99 counties in the 14 states participating in the Emerging Infections Program (EIP) and the Influenza Hospitalization Surveillance Project (IHSP). Participating states include: California, Colorado, Connecticut, Georgia, Iowa, Maryland, Michigan, Minnesota, New Mexico, New York, Ohio, Oregon, Tennessee, and Utah.
+COVID-NET covers approximately 10 percent of the U.S. population. The counties covered are located in all 10 Health and Human Services (HHS) regionsexternal icon. The designated COVID-NET surveillance area is generally similar to the U.S. population by demographics; however, the information might not be generalizable to the entire country.
+So it's 14 states, 99 counties, sampled-ish maybe from the 10 HHS regions.
+
+
+Non-random samples [@griffithColliderBiasUndermines2020]
+
+Who get's tested?
+Polymerase chain reaction (PCR) antigen tests are used to confirm a suspected (currently
+active) COVID-19 infection. Studies that aim to determine the risk factors for confirmed current
+COVID-19 infection therefore rely on participants having received a COVID-19 antigen test
+(hereafter for simplicity: COVID-19 test or test). 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Timeline
+On December 31 2019, China notified the World Health Organisation (WHO) about a cluster of pneumonia cases of unknown aetiology in Wuhan, the capital of the Hubei Province.
+The initial evidence was suggestive of the outbreak being associated with a seafood market in Wuhan, which was closed on January 1 2020.
+The aetiological agent was characterised as a SARS-like betacoronavirus, later named SARS-CoV-2, and the first whole genome sequence (Wuhan-HU-1) was deposited on NCBI Genbank on January 5 2020 (Wu et al., 2020). 
+
+
+# Day Zero
+
+One method for estimating the introduction date of COVID-19 is to establish the time and location of the first observed common ancestor. The first COVID-19 genome sequence was published January 5 2020. Since then, tens of thousands of sequences have been taken around the globe at different times. These sequences differ by slight mutations. These mutations occur at a predictable rate. So while that January 5 sequence was not the common ancestor of every observed sequence, we can speculate about what that common ancestry must have looked like and how far back in time it must have existed in order to produce all of the variation we see in its descendants.
+
+A survey of phylogenetic estimates of the introduction of COVID-19 place it sometime between October 6, 2019 and December 2019 [@vandorpEmergenceGenomicDiversity2020]. They fit a root-to-tip regression which is just the phylogenetic on the left hand side and the date of sampling on the right hand side. They fit it using the BactDating package.
+
+
+Because the first observed common ancestor is only the first acquired not the first produced in the wild, further attempts to wind back the clock.
+
+
+https://www.nature.com/articles/s41586-020-2008-3?fbclid=IwAR1VfqWqfRxS1Fi7Mh8yK4X03bcT8VUnnaymxMGlXYdwzWLPv4XhCIuYmFY
+Preliminary aetiological investigations excluded the presence of influenza virus, Chlamydia pneumoniae and Mycoplasma pneumoniae using commercial pathogen antigen-detection kits, and this was confirmed by PCR. Other common respiratory pathogens, including human adenoviruses, also tested negative by quantitative PCR (qPCR) (Extended Data Fig. 2). Although a combination of antibiotic, antiviral and glucocorticoid therapy was administered, the patient exhibited respiratory failure and was given high-flow non-invasive ventilation. T
+This virus strain was designated as WH-Human 1 coronavirus (WHCV) (and has also been referred to as ‘2019-nCoV’) and its whole genome sequence (29,903 nt) has been assigned GenBank accession number MN908947.
+
+
+https://www.nytimes.com/2020/04/08/science/new-york-coronavirus-cases-europe-genomes.html
+"I’m quite confident that it was not spreading in December in the United States,” Dr. Bedford said. “There may have been a couple other introductions in January that didn’t take off in the same way.”"
+
+"Dr. Heguy and her colleagues found some New York viruses that shared unique mutations not found elsewhere. “That’s when you know you’ve had a silent transmission for a while,” she said.
+Dr. Heguy estimated that the virus began circulating in the New York area a couple of months ago."
+
+And researchers at Mount Sinai started sequencing the genomes of patients coming through their hospital. They found that the earliest cases identified in New York were not linked to later ones.
+
+“Two weeks later, we start seeing viruses related to each other,” said Ana Silvia Gonzalez-Reiche, a member of the Mount Sinai team.
+
+Dr. Gonzalez-Reiche and her colleagues found that these viruses were practically identical to viruses found around Europe. They cannot say on what particular flight a particular virus arrived in New York. But they write that the viruses reveal “a period of untracked global transmission between late January to mid-February.”
+
+So far, the Mount Sinai researchers have identified seven separate lineages of viruses that entered New York and began circulating. “We will probably find more,” Dr. van Bakel said.
+
+Introduction in New York [@gonzalez-reicheIntroductionsEarlySpread2020]
+
+
+
+GISAID Initiative EpiCoV platform
+
+
+
+
+One of the first indicators of the COVID-19 pandemic was an increase in reported flu-like symptoms with negative influenza tests. A proxy measure based on this Influenza-Negative InfluenzaLike Illness (fnILI) Z-Score has been found to be a leading indicator for confirmed COVID-19 cases and deaths [@mirzaInfluenzaNegativeInfluenzaLikeIllness2020].
+
+To what degree do COVID-19 counts simply reflect testing? In the U.S., the number of new confirmed cases are highly correlated with the number of new tests administered [@kaashoekCOVID19PositiveCases2020]. 
+
+
+[@luForecastingFluActivity2020]
+
+
+
+[@NeartermForecastsInfluenzalike2019]
+
+Real-time, or near real-time, observations are critical for the generation of real-time forecasts. The primary data source for ILI forecasts in the US is provider-reported outpatient ILI visit rates collected through the ILINet (Centers for Disease Control and Prevention, 2018a). Several methods for supplementing these surveillance data with alternate estimates of ILI inferred from public non-surveillance proxies have also been proposed (Wang et al., 2015; Farrow, 2016; Kandula et al., 2017; Santillana et al., 2016, 2015; Lampos et al., 2015; Paul et al., 2014; Yang et al., 2015).
+
+
+
+
+[@luEstimatingPrevalenceCOVID192020]
+
+
+We'll begin with a deceptively simple question, when was the first confirmed case in each place? We'll then conclude this chapter with the less obvious question, when was the first real COVID-19 infecton in each place?
+
+
+Specifically, the adjusted divergences (div-IDEA and div-Vir ) and COVID Scaling
+methods incorporate an increased probability that an individual with ILI symptoms will seek
+medical attention after the start of the COVID-19 outbreak based on recent survey data [20, 21].
+
+One possible explanation is that many deaths caused by COVID-19 are not being ocially counted as COVID-19
+deaths because of a lack of testing (and that accounting for increased pneumonia deaths does not
+fully capture this) [24]; further evidence of this reasoning is that New York City started reporting
+plausible COVID-19 deaths (as in, not needing a test result) [25],
+
+By design and due to the utilized data sources, our estimates using data from ILINet and
+confirmed cases (Divergence method and COVID-Scaling) likely better capture the number of
+COVID-19 cases as they would be detected at the time of hospitalization; thus, they may be inherently lagged by roughly 12 days after initial infection [26].
+
+
+Our approaches could be expanded to include other data sources and methods to estimate
+8
+prevalence, such as Google searches [27, 28, 29], electronic health record data [30], clinician’s
+searches [31], and/or mobile health data [32].
+
+The ILI-based methods presented
+in this study demonstrate the potential of existing and well-established ILI surveillance systems to
+monitor future pandemics that, like COVID-19, present similar symptoms to ILI. This is especially
+promising given the WHO initiative launched in 2019 to expand influenza surveillance globally [33].
+Incorporating estimates from influenza and COVID-19 forecasting and participatory surveillance
+systems may prove useful in future studies as well [34, 35, 36, 37, 38, 39].
+
+5 Data and Methods
+CDC ILI and Virology: The CDC US Outpatient Influenza-like Illness Surveillance Network
+(ILINet) monitors the level of ILI circulating in the US at any given time by gathering information
+from physicians’ reports about patients seeking medical attention for ILI symptoms.
+
+ILI is defined as having a fever (temperature of 37.8+ Celsius) and a cough or a sore throat. ILINet provides public health ocials with an estimate of ILI activity in the population but has a known availability delay of 7 to 14 days.
+
+National level ILI activity is obtained by combining state-specific data weighted by state population [12]. 
+
+Additionally, the CDC reports information from the WHO and the National Respiratory and Enteric Virus Surveillance System (NREVSS) on laboratory test results for influenza types A and B. The data is available from the CDC FluView dashboard [11]. We omit Florida from our analysis as ILINet data is not available for Florida.
+
+
+
+
+Early evidence for COVID-19 may be from early warning FLU systems. FluView, above normal Flu symtpoms starting in November.
+
+According to CDCFlu,  Reported cases of influenza are picking up across the US indicating an early and potentially severe start to flu season (the red line with flags, below).
+
+The number of influenza tests sent but returning negative could be an early indicator
+https://twitter.com/CDCFlu/status/1224338758943825920
+
+
+"CDC Flu
+@CDCFlu
+ 19 Nov 2019
+More
+According to the latest #FluView report, some parts of the country are already seeing moderate to high levels of flu, marking an early start to their flu season. Other parts of the country are still seeing little activity. Learn more: https://go.usa.gov/xpK6R"
+
+https://twitter.com/CDCFlu/status/1197910891393638400
+
+
+ILINet
+Nationwide during week 17, 1.8% of patient visits reported through the U.S. Outpatient Influenza-like Illness Surveillance Network (ILINet) were due to influenza-like illness (ILI). This percentage is below the national baseline of 2.4%.
+
+
+Mirza et al. (2020) propose a proxy measure for COVID-19 based on positive influenza symptoms but negative influenza clinical test.
+
+
+
+Influenza-Negative Influenza-Like Illness (fnILI) Z-Score as a Proxy for Incidence and Mortality of COVID-19
+ View ORCID ProfileFatima N Mirza,  View ORCID ProfileAmyn A. Malik,  View ORCID ProfileSaad B. Omer
+ https://www.medrxiv.org/content/10.1101/2020.04.22.20075770v1
+
+
+Types of coronavirus
+https://www.cdc.gov/coronavirus/types.html
+
+
+https://github.com/reichlab/ncov/blob/master/analyses/ili-labtest-report.pdf
+Reich NG, Ray EL, Gibson GC, Cramer E RC. Looking for evidence of a high burden of
+230 COVID-19 in the United States from influenza-like illness data. Github. 2020.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Everything revolves around what the true R0 was and how many cases were in each country and when. We'll never see the world again where people don't know about COVID and so R_0 is the upper bound of R_t. There must be some statistical model mapping testing to how many true in the population there is. Like, out of a random sample, what positive rate would you expect given a certain number of real cases in the wild. Now what if it's not a random sample, and it's correlated with severity? Basically, everything points to everything else here, there's no such thing as a real point estimate just big bounds that you try to tie down as much as you can using other information you have.
+
+So for example, true R_0 is probably within ranges of other diseases we know about. We can use that as a prior.
+
+There's no such thing as real patient zero because contries are constantly trading cases with each other. But the genetics data should tell us a bit about that right?
+
